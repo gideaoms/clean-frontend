@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
-import { Posts } from './components/posts.tsx';
+import { Posts } from './components/posts/list.tsx';
 import { useSession } from './impl/context/session.tsx';
-import { SignIn } from './components/sign-in.tsx';
-import { CreatePost } from './components/create-post.tsx';
+import { SignIn } from './components/sign-in/form.tsx';
+import { CreatePost } from './components/post/create.tsx';
 
 export function App() {
   const { user } = useSession();
