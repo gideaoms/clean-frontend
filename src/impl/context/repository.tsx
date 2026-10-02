@@ -3,24 +3,24 @@ import type { PostRepository } from '../../core/repository/post.ts';
 import { PostRepositoryImpl } from '../repository/post.ts';
 
 type Repositories = {
-  postRepository: PostRepository
-} 
+  post: PostRepository
+}
 
 const Context = createContext<Repositories | null>(null);
-const postRepository = new PostRepositoryImpl();
+const post = new PostRepositoryImpl();
 
 export function RepositoryProvider(props: { children: ReactNode }) {
   return (
-    <Context.Provider value={{ postRepository }}>
+    <Context.Provider value={{ post }}>
       {props.children}
     </Context.Provider>
   );
 }
 
-export function useRepositories() {
-  const repositories = useContext(Context);
-  if (!repositories) {
-    throw new Error('Repositories must be provided');
+export function useRepository() {
+  const repository = useContext(Context);
+  if (!repository) {
+    throw new Error('Repository Context must be provided');
   }
-  return repositories;
+  return repository;
 }

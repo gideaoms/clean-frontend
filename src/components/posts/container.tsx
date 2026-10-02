@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useRepositories } from "../../impl/context/repository";
+import { useRepository } from "../../impl/context/repository";
 
 export function useContainer() {
-  const { postRepository } = useRepositories();
+  const repository = useRepository();
   const posts = useSuspenseQuery({
     queryKey: ['posts'],
-    queryFn: postRepository.findMany,
+    queryFn: repository.post.findMany,
   });
 
-  return { posts }
+  return { posts: posts.data }
 }

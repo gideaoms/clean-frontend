@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
-import { useRepositories } from "../../impl/context/repository";
+import { useRepository } from "../../impl/context/repository";
 import { Post } from "../../core/model/post";
 
 export function useContainer() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const { postRepository } = useRepositories();
-  const queryClient = useQueryClient();
+  const repository = useRepository();
+  const client = useQueryClient();
   const mutation = useMutation({
-    mutationFn: postRepository.create,
+    mutationFn: repository.post.create,
     onSuccess: (created) => {
-      queryClient.setQueryData<Post[]>(['posts'], (old) => [created, ...(old ?? [])]);
+      client.setQueryData<Post[]>(['posts'], (old = []) => [created, ...old]);
       setTitle('');
       setBody('');
     },

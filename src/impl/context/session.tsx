@@ -4,7 +4,7 @@ import { User } from '../../core/model/user.ts';
 type Session = {
   user: User | null;
   signIn: (email: string, password: string) => void | Error
-} 
+}
 
 const Context = createContext<Session | null>(null);
 
@@ -29,7 +29,7 @@ export function SessionProvider(props: { children: ReactNode }) {
 export function useSession() {
   const session = useContext(Context);
   if (!session) {
-    throw new Error('Session must be provided');
+    throw new Error('Session Context must be provided');
   }
   return session;
 }

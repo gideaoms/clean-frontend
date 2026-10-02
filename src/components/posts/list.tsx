@@ -5,7 +5,7 @@ export function Posts() {
 
   return (
     <ul>
-      {container.posts.data.map((it) => (
+      {container.posts.map((it) => (
         <li key={it.id}>{it.title}</li>
       ))}
     </ul>
