@@ -22,5 +22,5 @@ export function useContainer() {
     mutation.mutate(new Post({ title: title, body }));
   }
 
-  return { title, setTitle, body, setBody, onSubmit, mutation }
+  return { title, setTitle, body, setBody, onSubmit, error: mutation.error, isPending: mutation.isPending }
 }
