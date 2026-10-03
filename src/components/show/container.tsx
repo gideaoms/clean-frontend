@@ -5,6 +5,8 @@ import { useRepository } from "../../impl/context/repository.tsx";
 import { Post } from "../../core/model/post.ts";
 import { reviewers } from "../create-post/container.tsx";
 
+const statuses: Post.Status[] = ["draft", "published", "archived"];
+
 type Action =
   | {
     type: "set_title";
@@ -17,6 +19,10 @@ type Action =
   | {
     type: "set_reviewer";
     payload: string;
+  }
+  | {
+    type: "set_status";
+    payload: Post.Status;
   }
   | {
     type: "update_post/success";
@@ -41,6 +47,7 @@ export function useContainer() {
   const [title, setTitle] = useState(post.data.title);
   const [body, setBody] = useState(post.data.body);
   const [reviewerId, setReviewerId] = useState(post.data.reviewer?.id ?? '');
+  const [status, setStatus] = useState(post.data.status);
   const mutation = useMutation({
     mutationFn: repository.post.update,
     onSuccess: (updated) => dispatch({ type: "update_post/success", payload: updated }),
@@ -57,10 +64,14 @@ export function useContainer() {
       case "set_reviewer":
         setReviewerId(action.payload);
         break;
+      case "set_status":
+        setStatus(action.payload);
+        break;
       case "update_post/success": {
         const updated = new Post({
           ...post.data,
           ...action.payload,
+          status,
           reviewer: reviewers.find((it) => it.id === reviewerId),
         });
         client.setQueryData<Post>(['posts', postId], updated);
@@ -74,6 +85,7 @@ export function useContainer() {
           ...post.data,
           title,
           body,
+          status,
           reviewer: reviewers.find((it) => it.id === reviewerId),
         }));
         break;
@@ -87,6 +99,8 @@ export function useContainer() {
     body,
     reviewerId,
     reviewers,
+    status,
+    statuses,
     isPending: mutation.isPending,
     error: mutation.error,
   };

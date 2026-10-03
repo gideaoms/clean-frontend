@@ -10,6 +10,9 @@ export function Show() {
         <option value="">No reviewer</option>
         {state.reviewers.map(it => <option key={it.id} value={it.id}>{it.name}</option>)}
       </select>
+      <select value={state.status} onChange={e => dispatch({ type: "set_status", payload: e.target.value as typeof state.status })}>
+        {state.statuses.map(it => <option key={it} value={it}>{it}</option>)}
+      </select>
       <input value={state.title} onChange={e => dispatch({ type: "set_title", payload: e.target.value })} placeholder="Title" required />
       <textarea value={state.body} onChange={e => dispatch({ type: "set_body", payload: e.target.value })} placeholder="Body" required />
       <button type="submit" disabled={state.isPending}>
