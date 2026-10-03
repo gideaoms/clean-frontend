@@ -1,14 +1,14 @@
 import { useContainer } from './container.tsx';
 
 export function SignIn() {
-  const container = useContainer();
+  const { state, dispatch } = useContainer();
 
   return (
     <div>
-      <input value={container.email} onChange={e => container.setEmail(e.target.value)} />
-      <input value={container.password} onChange={e => container.setPassword(e.target.value)} />
-      <button onClick={container.onSignIn}>Sign In</button>
-      {container.errorMessage ? <p>{container.errorMessage}</p> : null}
+      <input value={state.email} onChange={e => dispatch({ type: "set_email", payload: e.target.value })} />
+      <input value={state.password} onChange={e => dispatch({ type: "set_password", payload: e.target.value })} />
+      <button onClick={() => dispatch({ type: "sign_in/request" })}>Sign In</button>
+      {state.errorMessage ? <p>{state.errorMessage}</p> : null}
     </div>
   );
 }

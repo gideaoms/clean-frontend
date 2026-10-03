@@ -1,11 +1,11 @@
 import { useContainer } from './container.tsx';
 
 export function Posts() {
-  const container = useContainer();
+  const { state } = useContainer();
 
   return (
     <ul>
-      {container.posts.map((it) => (
+      {state.posts.map((it) => (
         <li key={it.id}>{it.title}</li>
       ))}
     </ul>

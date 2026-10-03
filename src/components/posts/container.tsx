@@ -8,5 +8,9 @@ export function useContainer() {
     queryFn: repository.post.findMany,
   });
 
-  return { posts: posts.data }
+  const state = {
+    posts: posts.data,
+  }
+
+  return { state }
 }
