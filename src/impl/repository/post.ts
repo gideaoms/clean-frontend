@@ -2,15 +2,17 @@ import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
 import { type PostRepository } from '../../core/repository/post.ts';
 
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+
 export class PostRepositoryImpl implements PostRepository {
   async findMany(): Promise<Post[]> {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const response = await fetch(`${API_URL}/posts`);
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
     }
     const data = await response.json();
     const schema = type({
-      id: 'number',
+      id: 'string',
       title: 'string',
       body: 'string',
     }).array();
@@ -21,14 +23,14 @@ export class PostRepositoryImpl implements PostRepository {
     return posts.map((it) => new Post(it));
   }
 
-  async findOne(id: number): Promise<Post> {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+  async findOne(id: string): Promise<Post> {
+    const response = await fetch(`${API_URL}/posts/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
     }
     const data = await response.json();
     const schema = type({
-      id: 'number',
+      id: 'string',
       title: 'string',
       body: 'string',
     });
@@ -40,7 +42,7 @@ export class PostRepositoryImpl implements PostRepository {
   }
 
   async create(post: Post): Promise<Post> {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +54,7 @@ export class PostRepositoryImpl implements PostRepository {
     }
     const data = await response.json();
     const schema = type({
-      id: 'number',
+      id: 'string',
       title: 'string',
       body: 'string',
     });
@@ -64,7 +66,7 @@ export class PostRepositoryImpl implements PostRepository {
   }
 
   async update(post: Post): Promise<Post> {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}`, {
+    const response = await fetch(`${API_URL}/posts/${post.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +78,7 @@ export class PostRepositoryImpl implements PostRepository {
     }
     const data = await response.json();
     const schema = type({
-      id: 'number',
+      id: 'string',
       title: 'string',
       body: 'string',
     });

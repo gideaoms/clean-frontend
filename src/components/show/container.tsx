@@ -35,7 +35,7 @@ type Action =
 
 export function useContainer() {
   const { id } = useParams();
-  const postId = Number(id);
+  const postId = id ?? "";
   const repository = useRepository();
   const client = useQueryClient();
   const navigate = useNavigate();

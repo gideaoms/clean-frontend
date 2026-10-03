@@ -3,7 +3,7 @@ import { User } from "./user.ts";
 export declare namespace Post {
   type Status = "draft" | "published" | "archived";
   type Props = {
-    id: number;
+    id: string;
     title: string;
     body: string;
     status: Status;
@@ -13,7 +13,7 @@ export declare namespace Post {
 }
 
 export class Post {
-  readonly id: number;
+  readonly id: string;
   readonly title: string;
   readonly body: string;
   readonly status: Post.Status = "draft";
@@ -21,7 +21,7 @@ export class Post {
   readonly reviewer?: User;
 
   constructor(props: Partial<Post.Props>) {
-    this.id = props.id ?? 0;
+    this.id = props.id ?? "";
     this.title = props.title ?? "";
     this.body = props.body ?? "";
     this.status = props.status ?? "draft";

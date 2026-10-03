@@ -1,0 +1,16 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "Hello from json-server",
+      "body": "This post lives in db.json and is served locally.",
+      "status": "published"
+    },
+    {
+      "id": "2",
+      "title": "Second post",
+      "body": "Edit or create posts in the app and watch db.json change.",
+      "status": "draft"
+    }
+  ]
+}
