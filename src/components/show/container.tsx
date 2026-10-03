@@ -3,7 +3,6 @@ import { useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useRepository } from "../../impl/context/repository.tsx";
 import { Post } from "../../core/model/post.ts";
-import { reviewers } from "../create-post/container.tsx";
 
 const statuses: Post.Status[] = ["draft", "published", "archived"];
 
@@ -44,6 +43,12 @@ export function useContainer() {
     queryFn: () => repository.post.findOne(postId),
     staleTime: Infinity,
   });
+  const users = useSuspenseQuery({
+    queryKey: ['users'],
+    queryFn: repository.user.findMany,
+    staleTime: Infinity,
+  });
+  const reviewers = users.data.filter((it) => it.id !== post.data.author.id);
   const [title, setTitle] = useState(post.data.title);
   const [body, setBody] = useState(post.data.body);
   const [reviewerId, setReviewerId] = useState(post.data.reviewer?.id ?? '');

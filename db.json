@@ -42,6 +42,49 @@
         "name": "Alice",
         "email": "alice@mail.com"
       }
+    },
+    {
+      "id": "-FL8CnD4Ur0",
+      "title": "trwr",
+      "body": "fsg",
+      "status": "draft",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "John",
+      "email": "john@mail.com",
+      "password": "123456"
+    },
+    {
+      "id": "2",
+      "name": "Alice",
+      "email": "alice@mail.com",
+      "password": "123456"
+    },
+    {
+      "id": "3",
+      "name": "Bob",
+      "email": "bob@mail.com",
+      "password": "123456"
+    },
+    {
+      "id": "4",
+      "name": "Carol",
+      "email": "carol@mail.com",
+      "password": "123456"
+    },
+    {
+      "id": "5",
+      "name": "Dave",
+      "email": "dave@mail.com",
+      "password": "123456"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

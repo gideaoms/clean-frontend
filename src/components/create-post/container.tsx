@@ -1,18 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
 import { useRepository } from "../../impl/context/repository.tsx";
 import { Post } from "../../core/model/post.ts";
-import { User } from "../../core/model/user.ts";
 import { useSession } from "../../impl/context/session.tsx";
-
-export const reviewers = [
-  new User({ id: "2", name: "Alice", email: "alice@mail.com" }),
-  new User({ id: "3", name: "Bob", email: "bob@mail.com" }),
-  new User({ id: "4", name: "Carol", email: "carol@mail.com" }),
-  new User({ id: "5", name: "Dave", email: "dave@mail.com" }),
-  new User({ id: "6", name: "Eve", email: "eve@mail.com" }),
-];
 
 type Action =
   | {
@@ -44,6 +35,12 @@ export function useContainer() {
   const repository = useRepository();
   const client = useQueryClient();
   const navigate = useNavigate();
+  const users = useSuspenseQuery({
+    queryKey: ['users'],
+    queryFn: repository.user.findMany,
+    staleTime: Infinity,
+  });
+  const reviewers = users.data.filter((it) => it.id !== session.state.user?.id);
   const mutation = useMutation({
     mutationFn: repository.post.create,
     onSuccess: (created) => dispatch({ type: "create_post/success", payload: created }),

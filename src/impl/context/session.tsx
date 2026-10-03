@@ -2,20 +2,20 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { type } from 'arktype';
 import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
-
-const users = [
-  { user: new User({ id: "1", name: "John", email: "john@mail.com" }), password: "123456" },
-  { user: new User({ id: "2", name: "Alice", email: "alice@mail.com" }), password: "123456" },
-  { user: new User({ id: "3", name: "Bob", email: "bob@mail.com" }), password: "123456" },
-  { user: new User({ id: "4", name: "Carol", email: "carol@mail.com" }), password: "123456" },
-  { user: new User({ id: "5", name: "Dave", email: "dave@mail.com" }), password: "123456" },
-  { user: new User({ id: "6", name: "Eve", email: "eve@mail.com" }), password: "123456" },
-];
+import { useRepository } from './repository.tsx';
 
 type Action =
   | {
     type: "sign_in/request";
     payload: { email: string; password: string };
+  }
+  | {
+    type: "sign_in/success";
+    payload: User;
+  }
+  | {
+    type: "sign_in/failure";
+    payload: Error;
   }
 
 type Session = {
@@ -33,6 +33,7 @@ const STORAGE_KEY = 'session:user';
 
 export function SessionProvider(props: { children: ReactNode }) {
   const { storage } = useProvider();
+  const repository = useRepository();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -64,18 +65,21 @@ export function SessionProvider(props: { children: ReactNode }) {
     switch (action.type) {
       case "sign_in/request": {
         const { email, password } = action.payload;
-        const found = users.find((it) => it.user.email === email && it.password === password);
-        if (!found) {
-          setError(new Error('Email and/or password incorrect'));
-          break;
-        }
-        storage.set(STORAGE_KEY, JSON.stringify(found.user));
-        setUser(found.user);
-        setError(null);
+        repository.user.signIn(email, password)
+          .then((found) => dispatch({ type: "sign_in/success", payload: found }))
+          .catch((err: Error) => dispatch({ type: "sign_in/failure", payload: err }));
         break;
       }
+      case "sign_in/success":
+        storage.set(STORAGE_KEY, JSON.stringify(action.payload));
+        setUser(action.payload);
+        setError(null);
+        break;
+      case "sign_in/failure":
+        setError(action.payload);
+        break;
       default:
-        action.type satisfies never;
+        action satisfies never;
     }
   }
 

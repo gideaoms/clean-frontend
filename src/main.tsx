@@ -17,11 +17,11 @@ createRoot(document.getElementById('root')!)
       <QueryClientProvider client={client}>
         <BrowserRouter>
           <ProviderProvider>
-            <SessionProvider>
-              <RepositoryProvider>
+            <RepositoryProvider>
+              <SessionProvider>
                 <App />
-              </RepositoryProvider>
-            </SessionProvider>
+              </SessionProvider>
+            </RepositoryProvider>
           </ProviderProvider>
         </BrowserRouter>
       </QueryClientProvider>
