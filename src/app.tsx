@@ -7,7 +7,7 @@ import { Show } from './components/show/view.tsx';
 import { CreatePost } from './components/create-post/view.tsx';
 
 export function App() {
-  const { user } = useSession();
+  const { state: { user } } = useSession();
   if (!user) {
     return <SignIn />
   }
