@@ -13,7 +13,8 @@
     "@tanstack/react-query": "^5.103.2",
     "arktype": "^2.2.5",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router": "^8.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",

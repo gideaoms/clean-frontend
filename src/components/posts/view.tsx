@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { useContainer } from './container.tsx';
 
 export function Posts() {
@@ -6,7 +7,7 @@ export function Posts() {
   return (
     <ul>
       {state.posts.map((it) => (
-        <li key={it.id}>[{it.status}] {it.title}</li>
+        <li key={it.id}>[{it.status}] {it.title} <Link to={`/posts/${it.id}`}>View</Link></li>
       ))}
     </ul>
   );

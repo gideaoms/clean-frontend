@@ -1,8 +1,9 @@
 import { Suspense } from 'react';
-import { Posts } from './components/posts/list.tsx';
+import { Route, Routes } from 'react-router';
+import { Posts } from './components/posts/view.tsx';
 import { useSession } from './impl/context/session.tsx';
-import { SignIn } from './components/sign-in/form.tsx';
-import { CreatePost } from './components/post/create.tsx';
+import { SignIn } from './components/sign-in/view.tsx';
+import { Show } from './components/show/view.tsx';
 
 export function App() {
   const { user } = useSession();
@@ -12,8 +13,10 @@ export function App() {
   return (
     <Suspense fallback={<p>Loading...</p>}>
       <p>Welcome {user.name} ({user.email})</p>
-      <CreatePost />
-      <Posts />
+      <Routes>
+        <Route index element={<Posts />} />
+        <Route path="posts/:id" element={<Show />} />
+      </Routes>
     </Suspense>
   )
 }

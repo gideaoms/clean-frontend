@@ -21,6 +21,24 @@ export class PostRepositoryImpl implements PostRepository {
     return posts.map((it) => new Post(it));
   }
 
+  async findOne(id: number): Promise<Post> {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch post');
+    }
+    const data = await response.json();
+    const schema = type({
+      id: 'number',
+      title: 'string',
+      body: 'string',
+    });
+    const post = schema(data);
+    if (post instanceof type.errors) {
+      throw new Error('Invalid data');
+    }
+    return new Post(post);
+  }
+
   async create(post: Post): Promise<Post> {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
       method: 'POST',
