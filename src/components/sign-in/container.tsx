@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSession } from "../../impl/context/session";
+import { useSession } from "../../impl/context/session.tsx";
 
 type Action =
   | {

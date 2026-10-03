@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
-import { useRepository } from "../../impl/context/repository";
-import { Post } from "../../core/model/post";
+import { useRepository } from "../../impl/context/repository.tsx";
+import { Post } from "../../core/model/post.ts";
 
 type Action =
   | {
