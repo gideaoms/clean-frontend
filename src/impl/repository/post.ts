@@ -1,8 +1,32 @@
 import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
+import { User } from '../../core/model/user.ts';
 import { type PostRepository } from '../../core/repository/post.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+
+const userSchema = type({
+  id: 'string',
+  name: 'string',
+  email: 'string',
+});
+
+const postSchema = type({
+  id: 'string',
+  title: 'string',
+  body: 'string',
+  status: "'draft' | 'published' | 'archived'",
+  author: userSchema,
+  'reviewer?': userSchema,
+});
+
+function toPost(data: typeof postSchema.infer): Post {
+  return new Post({
+    ...data,
+    author: new User(data.author),
+    reviewer: data.reviewer && new User(data.reviewer),
+  });
+}
 
 export class PostRepositoryImpl implements PostRepository {
   async findMany(): Promise<Post[]> {
@@ -11,16 +35,11 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to fetch posts');
     }
     const data = await response.json();
-    const schema = type({
-      id: 'string',
-      title: 'string',
-      body: 'string',
-    }).array();
-    const posts = schema(data);
+    const posts = postSchema.array()(data);
     if (posts instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return posts.map((it) => new Post(it));
+    return posts.map(toPost);
   }
 
   async findOne(id: string): Promise<Post> {
@@ -29,16 +48,11 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to fetch post');
     }
     const data = await response.json();
-    const schema = type({
-      id: 'string',
-      title: 'string',
-      body: 'string',
-    });
-    const post = schema(data);
+    const post = postSchema(data);
     if (post instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return new Post(post);
+    return toPost(post);
   }
 
   async create(post: Post): Promise<Post> {
@@ -53,16 +67,11 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to create post');
     }
     const data = await response.json();
-    const schema = type({
-      id: 'string',
-      title: 'string',
-      body: 'string',
-    });
-    const createdPost = schema(data);
+    const createdPost = postSchema(data);
     if (createdPost instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return new Post(createdPost);
+    return toPost(createdPost);
   }
 
   async update(post: Post): Promise<Post> {
@@ -77,15 +86,10 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to update post');
     }
     const data = await response.json();
-    const schema = type({
-      id: 'string',
-      title: 'string',
-      body: 'string',
-    });
-    const updatedPost = schema(data);
+    const updatedPost = postSchema(data);
     if (updatedPost instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return new Post(updatedPost);
+    return toPost(updatedPost);
   }
 }

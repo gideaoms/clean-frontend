@@ -15,7 +15,10 @@ export function Posts() {
           <li key={it.id} className="flex items-center justify-between gap-4 px-4 py-3">
             <div className="flex items-center gap-3">
               <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium uppercase text-gray-600">{it.status}</span>
-              <span className="text-sm">{it.title}</span>
+              <div className="flex flex-col">
+                <span className="text-sm">{it.title}</span>
+                <span className="text-xs text-gray-500">by {it.author.name || "Unknown author"}</span>
+              </div>
             </div>
             <Link to={`/posts/${it.id}`} className="text-sm font-medium text-blue-600 hover:underline">View</Link>
           </li>

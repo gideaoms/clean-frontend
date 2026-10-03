@@ -97,6 +97,7 @@ export function useContainer() {
   const state = {
     title,
     body,
+    author: post.data.author,
     reviewerId,
     reviewers,
     status,

@@ -6,7 +6,10 @@ export function Show() {
 
   return (
     <form className="space-y-4 rounded-lg border border-gray-200 bg-white p-6" onSubmit={(e) => dispatch({ type: "update_post/request", payload: e })}>
-      <h1 className="text-xl font-semibold">Edit post</h1>
+      <div>
+        <h1 className="text-xl font-semibold">Edit post</h1>
+        <p className="text-sm text-gray-500">by {state.author.name || "Unknown author"}</p>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <select className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.reviewerId} onChange={e => dispatch({ type: "set_reviewer", payload: e.target.value })}>
           <option value="">No reviewer</option>

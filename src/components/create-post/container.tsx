@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router";
 import { useRepository } from "../../impl/context/repository.tsx";
 import { Post } from "../../core/model/post.ts";
 import { User } from "../../core/model/user.ts";
+import { useSession } from "../../impl/context/session.tsx";
 
 export const reviewers = [
   new User({ id: "2", name: "Alice", email: "alice@mail.com" }),
@@ -38,8 +40,10 @@ export function useContainer() {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [reviewerId, setReviewerId] = useState('');
+  const session = useSession();
   const repository = useRepository();
   const client = useQueryClient();
+  const navigate = useNavigate();
   const mutation = useMutation({
     mutationFn: repository.post.create,
     onSuccess: (created) => dispatch({ type: "create_post/success", payload: created }),
@@ -58,15 +62,14 @@ export function useContainer() {
         break;
       case "create_post/success":
         client.setQueryData<Post[]>(['posts'], (old = []) => [action.payload, ...old]);
-        setTitle('');
-        setBody('');
-        setReviewerId('');
+        navigate('/');
         break;
       case "create_post/request":
         action.payload.preventDefault();
         mutation.mutate(new Post({
           title,
           body,
+          author: session.state.user ?? undefined,
           reviewer: reviewers.find((it) => it.id === reviewerId),
         }));
         break;

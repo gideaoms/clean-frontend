@@ -4,13 +4,45 @@
       "id": "1",
       "title": "Hello from json-server",
       "body": "This post lives in db.json and is served locally.",
-      "status": "published"
+      "status": "published",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      },
+      "reviewer": {
+        "id": "2",
+        "name": "Alice",
+        "email": "alice@mail.com"
+      }
     },
     {
       "id": "2",
       "title": "Second post",
       "body": "Edit or create posts in the app and watch db.json change.",
-      "status": "draft"
+      "status": "draft",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      }
+    },
+    {
+      "id": "IqE5PdOjwwg",
+      "title": "rtew",
+      "body": "fsg",
+      "status": "draft",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      },
+      "reviewer": {
+        "id": "2",
+        "name": "Alice",
+        "email": "alice@mail.com"
+      }
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
