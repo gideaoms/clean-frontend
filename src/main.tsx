@@ -6,6 +6,7 @@ import { RepositoryProvider } from './impl/context/repository.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { SessionProvider } from './impl/context/session.tsx'
 import { BrowserRouter } from 'react-router'
+import { ProviderProvider } from './impl/context/provider.tsx'
 
 const client = new QueryClient()
 
@@ -14,11 +15,13 @@ createRoot(document.getElementById('root')!)
     <StrictMode>
       <QueryClientProvider client={client}>
         <BrowserRouter>
-          <SessionProvider>
-            <RepositoryProvider>
-              <App />
-            </RepositoryProvider>
-          </SessionProvider>
+          <ProviderProvider>
+            <SessionProvider>
+              <RepositoryProvider>
+                <App />
+              </RepositoryProvider>
+            </SessionProvider>
+          </ProviderProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </StrictMode>
