@@ -6,7 +6,7 @@ export function Posts() {
   return (
     <ul>
       {state.posts.map((it) => (
-        <li key={it.id}>{it.title}</li>
+        <li key={it.id}>[{it.status}] {it.title}</li>
       ))}
     </ul>
   );
