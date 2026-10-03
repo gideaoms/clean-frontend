@@ -5,29 +5,84 @@ export function Show() {
   const { state, dispatch } = useContainer();
 
   return (
-    <form className="space-y-4 rounded-lg border border-gray-200 bg-white p-6" onSubmit={(e) => dispatch({ type: "update_post/request", payload: e })}>
+    <form
+      className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
+      onSubmit={(e) => dispatch({ type: 'update_post/request', payload: e })}
+    >
       <div>
         <h1 className="text-xl font-semibold">Edit post</h1>
-        <p className="text-sm text-gray-500">by {state.author.name || "Unknown author"}</p>
+        <p className="text-sm text-gray-500">
+          by {state.author.name || 'Unknown author'}
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <select className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.reviewerId} onChange={e => dispatch({ type: "set_reviewer", payload: e.target.value })}>
+        <select
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={state.reviewerId}
+          onChange={(e) =>
+            dispatch({ type: 'set_reviewer', payload: e.target.value })
+          }
+        >
           <option value="">No reviewer</option>
-          {state.reviewers.map(it => <option key={it.id} value={it.id}>{it.name}</option>)}
+          {state.reviewers.map((it) => (
+            <option key={it.id} value={it.id}>
+              {it.name}
+            </option>
+          ))}
         </select>
-        <select className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.status} onChange={e => dispatch({ type: "set_status", payload: e.target.value as typeof state.status })}>
-          {state.statuses.map(it => <option key={it} value={it}>{it}</option>)}
+        <select
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={state.status}
+          onChange={(e) =>
+            dispatch({
+              type: 'set_status',
+              payload: e.target.value as typeof state.status,
+            })
+          }
+        >
+          {state.statuses.map((it) => (
+            <option key={it} value={it}>
+              {it}
+            </option>
+          ))}
         </select>
       </div>
-      <input className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.title} onChange={e => dispatch({ type: "set_title", payload: e.target.value })} placeholder="Title" required />
-      <textarea className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-32" value={state.body} onChange={e => dispatch({ type: "set_body", payload: e.target.value })} placeholder="Body" required />
+      <input
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        value={state.title}
+        onChange={(e) =>
+          dispatch({ type: 'set_title', payload: e.target.value })
+        }
+        placeholder="Title"
+        required
+      />
+      <textarea
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-32"
+        value={state.body}
+        onChange={(e) =>
+          dispatch({ type: 'set_body', payload: e.target.value })
+        }
+        placeholder="Body"
+        required
+      />
       <div className="flex items-center gap-4">
-        <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={state.isPending}>
+        <button
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          type="submit"
+          disabled={state.isPending}
+        >
           {state.isPending ? 'Saving...' : 'Save'}
         </button>
-        <Link to="/" className="text-sm font-medium text-blue-600 hover:underline">Back</Link>
+        <Link
+          to="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          Back
+        </Link>
       </div>
-      {state.error ? <p className="text-sm text-red-600">{state.error.message}</p> : null}
+      {state.error ? (
+        <p className="text-sm text-red-600">{state.error.message}</p>
+      ) : null}
     </form>
   );
 }

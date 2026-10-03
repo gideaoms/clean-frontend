@@ -3,7 +3,7 @@ export declare namespace User {
     id: string;
     name: string;
     email: string;
-  }
+  };
 }
 
 export class User {
@@ -12,8 +12,8 @@ export class User {
   readonly email: string;
 
   constructor(props: Partial<User.Props>) {
-    this.id = props.id ?? "";
-    this.name = props.name ?? "";
-    this.email = props.email ?? "";
+    this.id = props.id ?? '';
+    this.name = props.name ?? '';
+    this.email = props.email ?? '';
   }
 }

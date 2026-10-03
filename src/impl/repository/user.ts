@@ -1,6 +1,6 @@
 import { type } from 'arktype';
 import { User } from '../../core/model/user.ts';
-import { type UserRepository } from '../../core/repository/user.ts';
+import type { UserRepository } from '../../core/repository/user.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
@@ -37,7 +37,9 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async signIn(email: string, password: string): Promise<User> {
-    const response = await fetch(`${API_URL}/users?email=${encodeURIComponent(email)}`);
+    const response = await fetch(
+      `${API_URL}/users?email=${encodeURIComponent(email)}`,
+    );
     if (!response.ok) {
       throw new Error('Failed to sign in');
     }
@@ -46,7 +48,9 @@ export class UserRepositoryImpl implements UserRepository {
     if (users instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    const found = users.find((it) => it.email === email && it.password === password);
+    const found = users.find(
+      (it) => it.email === email && it.password === password,
+    );
     if (!found) {
       throw new Error('Email and/or password incorrect');
     }

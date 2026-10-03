@@ -1,4 +1,4 @@
-import { type StorageProvider } from '../../core/provider/storage.ts';
+import type { StorageProvider } from '../../core/provider/storage.ts';
 
 export class StorageProviderImpl implements StorageProvider {
   get(key: string): string | null {

@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { useSession } from "../../impl/context/session.tsx";
+import { useState } from 'react';
+import { useSession } from '../../impl/context/session.tsx';
 
 type Action =
   | {
-    type: "set_email";
-    payload: string;
-  }
+      type: 'set_email';
+      payload: string;
+    }
   | {
-    type: "set_password";
-    payload: string;
-  }
+      type: 'set_password';
+      payload: string;
+    }
   | {
-    type: "sign_in/request";
-  }
+      type: 'sign_in/request';
+    };
 
 export function useContainer() {
   const [email, setEmail] = useState('');
@@ -21,14 +21,17 @@ export function useContainer() {
 
   function dispatch(action: Action) {
     switch (action.type) {
-      case "set_email":
+      case 'set_email':
         setEmail(action.payload);
         break;
-      case "set_password":
+      case 'set_password':
         setPassword(action.payload);
         break;
-      case "sign_in/request":
-        session.dispatch({ type: "sign_in/request", payload: { email, password } });
+      case 'sign_in/request':
+        session.dispatch({
+          type: 'sign_in/request',
+          payload: { email, password },
+        });
         break;
       default:
         action satisfies never;
@@ -39,7 +42,7 @@ export function useContainer() {
     email,
     password,
     error: session.state.error,
-  }
+  };
 
-  return { state, dispatch }
+  return { state, dispatch };
 }

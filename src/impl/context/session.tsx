@@ -1,22 +1,28 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { type } from 'arktype';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
 
 type Action =
   | {
-    type: "sign_in/request";
-    payload: { email: string; password: string };
-  }
+      type: 'sign_in/request';
+      payload: { email: string; password: string };
+    }
   | {
-    type: "sign_in/success";
-    payload: User;
-  }
+      type: 'sign_in/success';
+      payload: User;
+    }
   | {
-    type: "sign_in/failure";
-    payload: Error;
-  }
+      type: 'sign_in/failure';
+      payload: Error;
+    };
 
 type Session = {
   state: {
@@ -25,7 +31,7 @@ type Session = {
     error: Error | null;
   };
   dispatch: (action: Action) => void;
-}
+};
 
 const Context = createContext<Session | null>(null);
 
@@ -38,6 +44,7 @@ export function SessionProvider(props: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
   useEffect(onInit, []);
 
   function onInit() {
@@ -63,19 +70,24 @@ export function SessionProvider(props: { children: ReactNode }) {
 
   function dispatch(action: Action) {
     switch (action.type) {
-      case "sign_in/request": {
+      case 'sign_in/request': {
         const { email, password } = action.payload;
-        repository.user.signIn(email, password)
-          .then((found) => dispatch({ type: "sign_in/success", payload: found }))
-          .catch((err: Error) => dispatch({ type: "sign_in/failure", payload: err }));
+        repository.user
+          .signIn(email, password)
+          .then((found) =>
+            dispatch({ type: 'sign_in/success', payload: found }),
+          )
+          .catch((err: Error) =>
+            dispatch({ type: 'sign_in/failure', payload: err }),
+          );
         break;
       }
-      case "sign_in/success":
+      case 'sign_in/success':
         storage.set(STORAGE_KEY, JSON.stringify(action.payload));
         setUser(action.payload);
         setError(null);
         break;
-      case "sign_in/failure":
+      case 'sign_in/failure':
         setError(action.payload);
         break;
       default:
@@ -87,7 +99,7 @@ export function SessionProvider(props: { children: ReactNode }) {
     user,
     isLoading,
     error,
-  }
+  };
 
   return (
     <Context.Provider value={{ state, dispatch }}>

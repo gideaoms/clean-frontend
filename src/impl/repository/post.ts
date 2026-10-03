@@ -1,7 +1,7 @@
 import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
 import { User } from '../../core/model/user.ts';
-import { type PostRepository } from '../../core/repository/post.ts';
+import type { PostRepository } from '../../core/repository/post.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
