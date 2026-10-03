@@ -6,6 +6,7 @@ export function useContainer() {
   const posts = useSuspenseQuery({
     queryKey: ['posts'],
     queryFn: repository.post.findMany,
+    staleTime: Infinity,
   });
 
   const state = {

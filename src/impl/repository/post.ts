@@ -62,4 +62,28 @@ export class PostRepositoryImpl implements PostRepository {
     }
     return new Post(createdPost);
   }
+
+  async update(post: Post): Promise<Post> {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(post),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to update post');
+    }
+    const data = await response.json();
+    const schema = type({
+      id: 'number',
+      title: 'string',
+      body: 'string',
+    });
+    const updatedPost = schema(data);
+    if (updatedPost instanceof type.errors) {
+      throw new Error('Invalid data');
+    }
+    return new Post(updatedPost);
+  }
 }

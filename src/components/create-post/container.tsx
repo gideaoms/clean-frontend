@@ -4,7 +4,7 @@ import { useRepository } from "../../impl/context/repository.tsx";
 import { Post } from "../../core/model/post.ts";
 import { User } from "../../core/model/user.ts";
 
-const reviewers = [
+export const reviewers = [
   new User({ id: "2", name: "Alice", email: "alice@mail.com" }),
   new User({ id: "3", name: "Bob", email: "bob@mail.com" }),
   new User({ id: "4", name: "Carol", email: "carol@mail.com" }),
