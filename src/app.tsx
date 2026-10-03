@@ -15,7 +15,7 @@ export function App() {
     <Suspense fallback={<p>Loading...</p>}>
       <p>Welcome {user.name} ({user.email})</p>
       <Routes>
-        <Route index element={<Posts />} />
+        <Route index path="/" element={<Posts />} />
         <Route path="posts/new" element={<CreatePost />} />
         <Route path="posts/:id" element={<Show />} />
       </Routes>
