@@ -4,17 +4,18 @@ export function CreatePost() {
   const { state, dispatch } = useContainer();
 
   return (
-    <form onSubmit={(e) => dispatch({ type: "create_post/request", payload: e })}>
-      <input value={state.title} onChange={e => dispatch({ type: "set_title", payload: e.target.value })} placeholder="Title" required />
-      <textarea value={state.body} onChange={e => dispatch({ type: "set_body", payload: e.target.value })} placeholder="Body" required />
-      <select value={state.reviewerId} onChange={e => dispatch({ type: "set_reviewer", payload: e.target.value })}>
+    <form className="space-y-4 rounded-lg border border-gray-200 bg-white p-6" onSubmit={(e) => dispatch({ type: "create_post/request", payload: e })}>
+      <h1 className="text-xl font-semibold">New post</h1>
+      <input className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.title} onChange={e => dispatch({ type: "set_title", payload: e.target.value })} placeholder="Title" required />
+      <textarea className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-32" value={state.body} onChange={e => dispatch({ type: "set_body", payload: e.target.value })} placeholder="Body" required />
+      <select className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" value={state.reviewerId} onChange={e => dispatch({ type: "set_reviewer", payload: e.target.value })}>
         <option value="">No reviewer</option>
         {state.reviewers.map(it => <option key={it.id} value={it.id}>{it.name}</option>)}
       </select>
-      <button type="submit" disabled={state.isPending}>
+      <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={state.isPending}>
         {state.isPending ? 'Creating...' : 'Create Post'}
       </button>
-      {state.error ? <p>{state.error.message}</p> : null}
+      {state.error ? <p className="text-sm text-red-600">{state.error.message}</p> : null}
     </form>
   );
 }

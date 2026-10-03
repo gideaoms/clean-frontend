@@ -12,13 +12,21 @@ export function App() {
     return <SignIn />
   }
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <p>Welcome {user.name} ({user.email})</p>
-      <Routes>
-        <Route index path="/" element={<Posts />} />
-        <Route path="posts/new" element={<CreatePost />} />
-        <Route path="posts/:id" element={<Show />} />
-      </Routes>
-    </Suspense>
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <header className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-2xl px-4 py-3 text-sm text-gray-600">
+          Welcome <span className="font-medium text-gray-900">{user.name}</span> ({user.email})
+        </div>
+      </header>
+      <main className="mx-auto max-w-2xl px-4 py-6">
+        <Suspense fallback={<p className="text-sm text-gray-500">Loading...</p>}>
+          <Routes>
+            <Route index path="/" element={<Posts />} />
+            <Route path="posts/new" element={<CreatePost />} />
+            <Route path="posts/:id" element={<Show />} />
+          </Routes>
+        </Suspense>
+      </main>
+    </div>
   )
 }
