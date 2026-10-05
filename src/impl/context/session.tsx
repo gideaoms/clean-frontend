@@ -35,7 +35,6 @@ type Session = {
 };
 
 const Context = createContext<Session | null>(null);
-
 const STORAGE_KEY = 'session:user';
 
 export function SessionProvider(props: { children: ReactNode }) {
