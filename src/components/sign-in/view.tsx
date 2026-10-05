@@ -1,7 +1,9 @@
+import { useSession } from '../../impl/context/session.tsx';
 import { useContainer } from './container.tsx';
 
 export function SignIn() {
   const { state, dispatch } = useContainer();
+  const session = useSession();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -26,12 +28,17 @@ export function SignIn() {
         <button
           type="button"
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 w-full"
-          onClick={() => dispatch({ type: 'sign_in/request' })}
+          onClick={() =>
+            session.dispatch({
+              type: 'sign_in/request',
+              payload: { email: state.email, password: state.password },
+            })
+          }
         >
           Sign In
         </button>
-        {state.error ? (
-          <p className="text-sm text-red-600">{state.error.message}</p>
+        {session.state.error ? (
+          <p className="text-sm text-red-600">{session.state.error.message}</p>
         ) : null}
       </div>
     </div>
