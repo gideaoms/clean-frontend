@@ -12,17 +12,17 @@ import { useRepository } from './repository.tsx';
 
 type Action =
   | {
-      type: 'sign_in/request';
-      payload: { email: string; password: string };
-    }
+    type: 'sign_in/request';
+    payload: { email: string; password: string };
+  }
   | {
-      type: 'sign_in/success';
-      payload: User;
-    }
+    type: 'sign_in/success';
+    payload: User;
+  }
   | {
-      type: 'sign_in/failure';
-      payload: Error;
-    };
+    type: 'sign_in/failure';
+    payload: Error;
+  };
 
 type Session = {
   state: {
@@ -38,7 +38,7 @@ const Context = createContext<Session | null>(null);
 const STORAGE_KEY = 'session:user';
 
 export function SessionProvider(props: { children: ReactNode }) {
-  const { storage } = useProvider();
+  const provider = useProvider();
   const repository = useRepository();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +48,7 @@ export function SessionProvider(props: { children: ReactNode }) {
   useEffect(onInit, []);
 
   function onInit() {
-    const raw = storage.get(STORAGE_KEY);
+    const raw = provider.storage.get(STORAGE_KEY);
     if (!raw) {
       setIsLoading(false);
       return;
@@ -60,7 +60,7 @@ export function SessionProvider(props: { children: ReactNode }) {
     });
     const user = schema(JSON.parse(raw));
     if (user instanceof type.errors) {
-      storage.remove(STORAGE_KEY);
+      provider.storage.remove(STORAGE_KEY);
       setIsLoading(false);
       return;
     }
@@ -83,7 +83,7 @@ export function SessionProvider(props: { children: ReactNode }) {
         break;
       }
       case 'sign_in/success':
-        storage.set(STORAGE_KEY, JSON.stringify(action.payload));
+        provider.storage.set(STORAGE_KEY, JSON.stringify(action.payload));
         setUser(action.payload);
         setError(null);
         break;
