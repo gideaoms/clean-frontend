@@ -1,13 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { type } from 'arktype';
-import {
-  createContext,
-  type ReactNode,
-  useContext,
-  useEffect,
-  useEffectEvent,
-  useState,
-} from 'react';
+import { createContext, type ReactNode, useContext, useState } from 'react';
 import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
@@ -25,7 +18,6 @@ type Action =
 type Session = {
   state: {
     user: User | null;
-    isFetching: boolean;
     isAuthenticating: boolean;
     error: Error | null;
   };
@@ -38,36 +30,28 @@ const STORAGE_KEY = 'session:user';
 export function SessionProvider(props: { children: ReactNode }) {
   const provider = useProvider();
   const repository = useRepository();
-  const [user, setUser] = useState<User | null>(null);
-  const [isFetching, setIsFetching] = useState(true);
-  const mutation = useMutation({
-    mutationFn: (credentials: { email: string; password: string }) =>
-      repository.user.signIn(credentials.email, credentials.password),
-    onSuccess: (found) => dispatch({ type: 'sign_in/success', payload: found }),
-  });
-
-  const onInit = useEffectEvent(() => {
+  const [user, setUser] = useState(() => {
     const raw = provider.storage.get(STORAGE_KEY);
     if (!raw) {
-      setIsFetching(false);
-      return;
+      return null;
     }
     const schema = type({
       id: 'string',
       name: 'string',
       email: 'string',
     });
-    const user = schema(JSON.parse(raw));
-    if (user instanceof type.errors) {
+    const found = schema(JSON.parse(raw));
+    if (found instanceof type.errors) {
       provider.storage.remove(STORAGE_KEY);
-      setIsFetching(false);
-      return;
+      return null;
     }
-    setUser(new User(user));
-    setIsFetching(false);
+    return new User(found);
   });
-
-  useEffect(onInit, []);
+  const mutation = useMutation({
+    mutationFn: (credentials: { email: string; password: string }) =>
+      repository.user.signIn(credentials.email, credentials.password),
+    onSuccess: (found) => dispatch({ type: 'sign_in/success', payload: found }),
+  });
 
   function dispatch(action: Action) {
     switch (action.type) {
@@ -87,7 +71,6 @@ export function SessionProvider(props: { children: ReactNode }) {
 
   const state = {
     user,
-    isFetching,
     error: mutation.error,
     isAuthenticating: mutation.isPending,
   };
