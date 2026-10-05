@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -n web,api -c cyan,magenta \"vite\" \"npm:api\"",
     "build": "tsc -b && vite build",
     "lint": "biome lint",
     "preview": "vite preview",
@@ -32,6 +32,7 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "concurrently": "^10.0.5",
     "json-server": "^1.0.0-beta.15",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
