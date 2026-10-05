@@ -65,7 +65,7 @@ function List() {
               <div className="flex flex-col">
                 <span className="text-sm">{it.title}</span>
                 <span className="text-xs text-gray-500">
-                  by {it.author.name || 'Unknown author'}
+                  by {it.author.name}
                 </span>
               </div>
             </div>
