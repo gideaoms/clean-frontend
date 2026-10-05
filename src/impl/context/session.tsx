@@ -4,6 +4,7 @@ import {
   type ReactNode,
   useContext,
   useEffect,
+  useEffectEvent,
   useState,
 } from 'react';
 import { User } from '../../core/model/user.ts';
@@ -12,17 +13,17 @@ import { useRepository } from './repository.tsx';
 
 type Action =
   | {
-    type: 'sign_in/request';
-    payload: { email: string; password: string };
-  }
+      type: 'sign_in/request';
+      payload: { email: string; password: string };
+    }
   | {
-    type: 'sign_in/success';
-    payload: User;
-  }
+      type: 'sign_in/success';
+      payload: User;
+    }
   | {
-    type: 'sign_in/failure';
-    payload: Error;
-  };
+      type: 'sign_in/failure';
+      payload: Error;
+    };
 
 type Session = {
   state: {
@@ -44,10 +45,7 @@ export function SessionProvider(props: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
-  useEffect(onInit, []);
-
-  function onInit() {
+  const onInit = useEffectEvent(() => {
     const raw = provider.storage.get(STORAGE_KEY);
     if (!raw) {
       setIsLoading(false);
@@ -66,7 +64,9 @@ export function SessionProvider(props: { children: ReactNode }) {
     }
     setUser(new User(user));
     setIsLoading(false);
-  }
+  });
+
+  useEffect(onInit, []);
 
   function dispatch(action: Action) {
     switch (action.type) {
