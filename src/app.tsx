@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
-import { PostForm } from './components/post-form/view.tsx';
+import { PostForm } from './components/post/view.tsx';
 import { Posts } from './components/posts/view.tsx';
 import { SignIn } from './components/sign-in/view.tsx';
 import { useSession } from './impl/context/session.tsx';
