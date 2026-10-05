@@ -1,8 +1,7 @@
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
-import { CreatePost } from './components/create-post/view.tsx';
+import { PostForm } from './components/post-form/view.tsx';
 import { Posts } from './components/posts/view.tsx';
-import { Show } from './components/show/view.tsx';
 import { SignIn } from './components/sign-in/view.tsx';
 import { useSession } from './impl/context/session.tsx';
 
@@ -27,8 +26,8 @@ export function App() {
         >
           <Routes>
             <Route index path="/" element={<Posts />} />
-            <Route path="posts/new" element={<CreatePost />} />
-            <Route path="posts/:id" element={<Show />} />
+            <Route path="posts/new" element={<PostForm />} />
+            <Route path="posts/:id" element={<PostForm />} />
           </Routes>
         </Suspense>
       </main>

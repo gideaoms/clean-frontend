@@ -2,11 +2,11 @@ import { Suspense } from 'react';
 import { Link, useParams } from 'react-router';
 import { useContainer } from './container.tsx';
 
-export function Show() {
+export function PostForm() {
   const { id } = useParams();
 
   return (
-    <Suspense key={id} fallback={<Skeleton />}>
+    <Suspense key={id ?? 'new'} fallback={<Skeleton />}>
       <Form />
     </Suspense>
   );
@@ -36,10 +36,12 @@ function Form() {
   return (
     <form
       className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
-      onSubmit={(e) => dispatch({ type: 'update_post/request', payload: e })}
+      onSubmit={(e) => dispatch({ type: 'save_post/request', payload: e })}
     >
       <div>
-        <h1 className="text-xl font-semibold">Edit post</h1>
+        <h1 className="text-xl font-semibold">
+          {state.isNew ? 'New post' : 'Edit post'}
+        </h1>
         <p className="text-sm text-gray-500">
           by {state.author.name || 'Unknown author'}
         </p>

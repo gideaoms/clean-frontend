@@ -4,10 +4,12 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { type FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Post } from '../../core/model/post.ts';
 import { useRepository } from '../../impl/context/repository.tsx';
 import { useSession } from '../../impl/context/session.tsx';
+
+const statuses: Post.Status[] = ['draft', 'published', 'archived'];
 
 type Action =
   | {
@@ -23,32 +25,45 @@ type Action =
       payload: string;
     }
   | {
-      type: 'create_post/success';
+      type: 'set_status';
+      payload: string;
+    }
+  | {
+      type: 'save_post/success';
       payload: Post;
     }
   | {
-      type: 'create_post/request';
+      type: 'save_post/request';
       payload: FormEvent<HTMLFormElement>;
     };
 
 export function useContainer() {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [reviewerId, setReviewerId] = useState('');
+  const { id } = useParams();
+  const postId = id ?? '';
+  const isNew = !postId;
   const session = useSession();
   const repository = useRepository();
   const client = useQueryClient();
   const navigate = useNavigate();
+  const found = useSuspenseQuery({
+    queryKey: ['posts', postId],
+    queryFn: () => (isNew ? null : repository.post.findOne(postId)),
+  });
+  const post =
+    found.data ?? new Post({ author: session.state.user ?? undefined });
   const users = useSuspenseQuery({
     queryKey: ['users'],
     queryFn: repository.user.findMany,
-    staleTime: Infinity,
   });
-  const reviewers = users.data.filter((it) => it.id !== session.state.user?.id);
+  const reviewers = users.data.filter((it) => it.id !== post.author.id);
+  const [title, setTitle] = useState(post.title);
+  const [body, setBody] = useState(post.body);
+  const [reviewerId, setReviewerId] = useState(post.reviewer?.id ?? '');
+  const [status, setStatus] = useState(post.status);
   const mutation = useMutation({
-    mutationFn: repository.post.create,
-    onSuccess: (created) =>
-      dispatch({ type: 'create_post/success', payload: created }),
+    mutationFn: isNew ? repository.post.create : repository.post.update,
+    onSuccess: (saved) =>
+      dispatch({ type: 'save_post/success', payload: saved }),
   });
 
   function dispatch(action: Action) {
@@ -62,20 +77,28 @@ export function useContainer() {
       case 'set_reviewer':
         setReviewerId(action.payload);
         break;
-      case 'create_post/success':
-        client.setQueryData<Post[]>(['posts'], (old = []) => [
-          action.payload,
-          ...old,
-        ]);
+      case 'set_status':
+        setStatus(action.payload as Post.Status);
+        break;
+      case 'save_post/success': {
+        const saved = action.payload;
+        client.setQueryData<Post>(['posts', saved.id], saved);
+        client.setQueryData<Post[]>(['posts'], (old = []) =>
+          isNew
+            ? [saved, ...old]
+            : old.map((it) => (it.id === saved.id ? saved : it)),
+        );
         navigate('/');
         break;
-      case 'create_post/request':
+      }
+      case 'save_post/request':
         action.payload.preventDefault();
         mutation.mutate(
           new Post({
+            ...post,
             title,
             body,
-            author: session.state.user ?? undefined,
+            status,
             reviewer: reviewers.find((it) => it.id === reviewerId),
           }),
         );
@@ -86,10 +109,14 @@ export function useContainer() {
   }
 
   const state = {
+    isNew,
     title,
     body,
+    author: post.author,
     reviewerId,
     reviewers,
+    status,
+    statuses,
     isPending: mutation.isPending,
     error: mutation.error,
   };

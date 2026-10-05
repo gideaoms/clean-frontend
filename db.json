@@ -53,6 +53,33 @@
         "name": "John",
         "email": "john@mail.com"
       }
+    },
+    {
+      "id": "pUTZN5PrzGg",
+      "title": "title1",
+      "body": "body1",
+      "status": "draft",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      },
+      "reviewer": {
+        "id": "2",
+        "name": "Alice",
+        "email": "alice@mail.com"
+      }
+    },
+    {
+      "id": "VIXPxkJZ_Kg",
+      "title": "title2",
+      "body": "body2",
+      "status": "draft",
+      "author": {
+        "id": "1",
+        "name": "John",
+        "email": "john@mail.com"
+      }
     }
   ],
   "users": [
