@@ -1,6 +1,7 @@
 import { type } from 'arktype';
 import { User } from '../../core/model/user.ts';
 import type { UserRepository } from '../../core/repository/user.ts';
+import { sleep } from '../../util/sleep.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
@@ -24,6 +25,7 @@ function toUser(data: typeof userSchema.infer): User {
 
 export class UserRepositoryImpl implements UserRepository {
   async findMany(): Promise<User[]> {
+    await sleep(1000);
     const response = await fetch(`${API_URL}/users`);
     if (!response.ok) {
       throw new Error('Failed to fetch users');
@@ -36,23 +38,24 @@ export class UserRepositoryImpl implements UserRepository {
     return users.map(toUser);
   }
 
-  async signIn(email: string, password: string): Promise<User> {
+  async signIn(email: string, password: string): Promise<User | Error> {
+    await sleep(1000);
     const response = await fetch(
       `${API_URL}/users?email=${encodeURIComponent(email)}`,
     );
     if (!response.ok) {
-      throw new Error('Failed to sign in');
+      return new Error('Failed to sign in');
     }
     const data = await response.json();
     const users = credentialsSchema.array()(data);
     if (users instanceof type.errors) {
-      throw new Error('Invalid data');
+      return new Error('Invalid data');
     }
     const found = users.find(
       (it) => it.email === email && it.password === password,
     );
     if (!found) {
-      throw new Error('Email and/or password incorrect');
+      return new Error('Email and/or password incorrect');
     }
     return toUser(found);
   }

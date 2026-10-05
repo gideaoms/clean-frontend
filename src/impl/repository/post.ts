@@ -2,6 +2,7 @@ import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
 import { User } from '../../core/model/user.ts';
 import type { PostRepository } from '../../core/repository/post.ts';
+import { sleep } from '../../util/sleep.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
@@ -30,6 +31,7 @@ function toPost(data: typeof postSchema.infer): Post {
 
 export class PostRepositoryImpl implements PostRepository {
   async findMany(): Promise<Post[]> {
+    await sleep(1000);
     const response = await fetch(`${API_URL}/posts`);
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
@@ -43,6 +45,7 @@ export class PostRepositoryImpl implements PostRepository {
   }
 
   async findOne(id: string): Promise<Post> {
+    await sleep(1000);
     const response = await fetch(`${API_URL}/posts/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
@@ -56,6 +59,7 @@ export class PostRepositoryImpl implements PostRepository {
   }
 
   async create(post: Post): Promise<Post> {
+    await sleep(1000);
     const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
@@ -75,6 +79,7 @@ export class PostRepositoryImpl implements PostRepository {
   }
 
   async update(post: Post): Promise<Post> {
+    await sleep(1000);
     const response = await fetch(`${API_URL}/posts/${post.id}`, {
       method: 'PUT',
       headers: {
