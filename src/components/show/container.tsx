@@ -25,7 +25,7 @@ type Action =
     }
   | {
       type: 'set_status';
-      payload: Post.Status;
+      payload: string;
     }
   | {
       type: 'update_post/success';
@@ -75,7 +75,7 @@ export function useContainer() {
         setReviewerId(action.payload);
         break;
       case 'set_status':
-        setStatus(action.payload);
+        setStatus(action.payload as Post.Status);
         break;
       case 'update_post/success': {
         const updated = new Post({

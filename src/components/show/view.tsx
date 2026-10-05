@@ -1,7 +1,36 @@
-import { Link } from 'react-router';
+import { Suspense } from 'react';
+import { Link, useParams } from 'react-router';
 import { useContainer } from './container.tsx';
 
 export function Show() {
+  const { id } = useParams();
+
+  return (
+    <Suspense key={id} fallback={<Skeleton />}>
+      <Form />
+    </Suspense>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+      <div className="space-y-2">
+        <div className="h-7 w-32 rounded bg-gray-200" />
+        <div className="h-4 w-24 rounded bg-gray-200" />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="h-9 rounded-md bg-gray-200" />
+        <div className="h-9 rounded-md bg-gray-200" />
+      </div>
+      <div className="h-9 rounded-md bg-gray-200" />
+      <div className="h-32 rounded-md bg-gray-200" />
+      <div className="h-9 w-20 rounded-md bg-gray-200" />
+    </div>
+  );
+}
+
+function Form() {
   const { state, dispatch } = useContainer();
 
   return (
@@ -36,7 +65,7 @@ export function Show() {
           onChange={(e) =>
             dispatch({
               type: 'set_status',
-              payload: e.target.value as typeof state.status,
+              payload: e.target.value,
             })
           }
         >

@@ -1,6 +1,28 @@
+import { Suspense } from 'react';
+import { Link } from 'react-router';
 import { useContainer } from './container.tsx';
 
 export function CreatePost() {
+  return (
+    <Suspense fallback={<Skeleton />}>
+      <Form />
+    </Suspense>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+      <div className="h-7 w-28 rounded bg-gray-200" />
+      <div className="h-9 rounded-md bg-gray-200" />
+      <div className="h-32 rounded-md bg-gray-200" />
+      <div className="h-9 rounded-md bg-gray-200" />
+      <div className="h-9 w-28 rounded-md bg-gray-200" />
+    </div>
+  );
+}
+
+function Form() {
   const { state, dispatch } = useContainer();
 
   return (
@@ -41,13 +63,21 @@ export function CreatePost() {
           </option>
         ))}
       </select>
-      <button
-        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        type="submit"
-        disabled={state.isPending}
-      >
-        {state.isPending ? 'Creating...' : 'Create Post'}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          type="submit"
+          disabled={state.isPending}
+        >
+          {state.isPending ? 'Saving...' : 'Save'}
+        </button>
+        <Link
+          to="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          Back
+        </Link>
+      </div>
       {state.error ? (
         <p className="text-sm text-red-600">{state.error.message}</p>
       ) : null}
