@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type } from 'arktype';
 import { createContext, type ReactNode, useContext, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
@@ -13,6 +14,9 @@ type Action =
   | {
       type: 'sign_in/success';
       payload: User;
+    }
+  | {
+      type: 'sign_out';
     };
 
 type Session = {
@@ -30,6 +34,8 @@ const STORAGE_KEY = 'session:user';
 export function SessionProvider(props: { children: ReactNode }) {
   const provider = useProvider();
   const repository = useRepository();
+  const client = useQueryClient();
+  const navigate = useNavigate();
   const [user, setUser] = useState(() => {
     const raw = provider.storage.get(STORAGE_KEY);
     if (!raw) {
@@ -62,6 +68,14 @@ export function SessionProvider(props: { children: ReactNode }) {
       case 'sign_in/success': {
         provider.storage.set(STORAGE_KEY, JSON.stringify(action.payload));
         setUser(action.payload);
+        break;
+      }
+      case 'sign_out': {
+        provider.storage.remove(STORAGE_KEY);
+        setUser(null);
+        mutation.reset();
+        client.clear();
+        navigate('/', { replace: true });
         break;
       }
       default:
