@@ -19,14 +19,6 @@
       "preset": "recommended",
       "correctness": {
         "useHookAtTopLevel": "error"
-      },
-      "style": {
-        "useComponentExportOnlyModules": {
-          "level": "warn",
-          "options": {
-            "allowConstantExport": true
-          }
-        }
       }
     }
   },
