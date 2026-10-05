@@ -11,24 +11,16 @@ import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
 
-type Action =
-  | {
-      type: 'sign_in/request';
-      payload: { email: string; password: string };
-    }
-  | {
-      type: 'sign_in/success';
-      payload: User;
-    }
-  | {
-      type: 'sign_in/failure';
-      payload: Error;
-    };
+type Action = {
+  type: 'sign_in';
+  payload: { email: string; password: string };
+};
 
 type Session = {
   state: {
     user: User | null;
-    isLoading: boolean;
+    isFetching: boolean;
+    isAuthenticating: boolean;
     error: Error | null;
   };
   dispatch: (action: Action) => void;
@@ -41,13 +33,14 @@ export function SessionProvider(props: { children: ReactNode }) {
   const provider = useProvider();
   const repository = useRepository();
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const onInit = useEffectEvent(() => {
     const raw = provider.storage.get(STORAGE_KEY);
     if (!raw) {
-      setIsLoading(false);
+      setIsFetching(false);
       return;
     }
     const schema = type({
@@ -58,46 +51,40 @@ export function SessionProvider(props: { children: ReactNode }) {
     const user = schema(JSON.parse(raw));
     if (user instanceof type.errors) {
       provider.storage.remove(STORAGE_KEY);
-      setIsLoading(false);
+      setIsFetching(false);
       return;
     }
     setUser(new User(user));
-    setIsLoading(false);
+    setIsFetching(false);
   });
 
   useEffect(onInit, []);
 
-  function dispatch(action: Action) {
+  async function dispatch(action: Action) {
     switch (action.type) {
-      case 'sign_in/request': {
+      case 'sign_in': {
+        setIsAuthenticating(true);
         const { email, password } = action.payload;
-        repository.user
-          .signIn(email, password)
-          .then((found) =>
-            dispatch({ type: 'sign_in/success', payload: found }),
-          )
-          .catch((err: Error) =>
-            dispatch({ type: 'sign_in/failure', payload: err }),
-          );
+        const found = await repository.user.signIn(email, password);
+        if (found instanceof Error) {
+          setError(found);
+          setIsAuthenticating(false);
+          return;
+        }
+        provider.storage.set(STORAGE_KEY, JSON.stringify(found));
+        setUser(found);
         break;
       }
-      case 'sign_in/success':
-        provider.storage.set(STORAGE_KEY, JSON.stringify(action.payload));
-        setUser(action.payload);
-        setError(null);
-        break;
-      case 'sign_in/failure':
-        setError(action.payload);
-        break;
       default:
-        action satisfies never;
+        action.type satisfies never;
     }
   }
 
   const state = {
     user,
-    isLoading,
+    isFetching,
     error,
+    isAuthenticating,
   };
 
   return (

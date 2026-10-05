@@ -7,18 +7,18 @@ import { SignIn } from './components/sign-in/view.tsx';
 import { useSession } from './impl/context/session.tsx';
 
 export function App() {
-  const {
-    state: { user },
-  } = useSession();
-  if (!user) {
+  const { state } = useSession();
+  if (!state.user) {
     return <SignIn />;
   }
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-2xl px-4 py-3 text-sm text-gray-600">
-          Welcome <span className="font-medium text-gray-900">{user.name}</span>{' '}
-          ({user.email})
+          Welcome{' '}
+          <span className="font-medium text-gray-900">{state.user.name}</span> (
+          {state.user.email})
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-4 py-6">
