@@ -1,61 +1,97 @@
 import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
-import { User } from '../../core/model/user.ts';
 import type { PostRepository } from '../../core/repository/post.ts';
 import { sleep } from '../../util/sleep.ts';
+import { User } from '../../core/model/user.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
-const userSchema = type({
-  id: 'string',
-  name: 'string',
-  email: 'string',
-});
-
-const postSchema = type({
+const schema = type({
   id: 'string',
   title: 'string',
   body: 'string',
   status: "'draft' | 'published' | 'archived'",
-  author: userSchema,
-  'reviewer?': userSchema,
+  authorId: 'string',
+  'reviewerId?': 'string',
 });
-
-function toPost(data: typeof postSchema.infer): Post {
-  return new Post({
-    ...data,
-    author: new User(data.author),
-    reviewer: data.reviewer && new User(data.reviewer),
-  });
-}
 
 export class PostRepositoryImpl implements PostRepository {
   async findMany(): Promise<Post[]> {
     await sleep(1000);
-    const response = await fetch(`${API_URL}/posts`);
+    const response = await fetch(`${API_URL}/posts?_embed=author`);
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
     }
     const data = await response.json();
-    const posts = postSchema.array()(data);
+    const posts = type({
+      id: 'string',
+      title: 'string',
+      body: 'string',
+      status: "'draft' | 'published' | 'archived'",
+      authorId: 'string',
+      author: {
+        id: 'string',
+        name: 'string',
+        email: 'string',
+      },
+      'reviewerId?': 'string',
+    }).array()(data);
     if (posts instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return posts.map(toPost);
+    return posts.map((it) => {
+      return new Post({
+        id: it.id,
+        title: it.title,
+        body: it.body,
+        status: it.status,
+        authorId: it.authorId,
+        reviewerId: it.reviewerId,
+        author: new User({
+          id: it.author.id,
+          name: it.author.name,
+          email: it.author.email,
+        }),
+      });
+    });
   }
 
   async findOne(id: string): Promise<Post> {
     await sleep(1000);
-    const response = await fetch(`${API_URL}/posts/${id}`);
+    const response = await fetch(`${API_URL}/posts/${id}?_embed=author`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
     }
     const data = await response.json();
-    const post = postSchema(data);
+    const post = type({
+      id: 'string',
+      title: 'string',
+      body: 'string',
+      status: "'draft' | 'published' | 'archived'",
+      authorId: 'string',
+      author: {
+        id: 'string',
+        name: 'string',
+        email: 'string',
+      },
+      'reviewerId?': 'string',
+    })(data);
     if (post instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return toPost(post);
+    return new Post({
+      id: post.id,
+      title: post.title,
+      body: post.body,
+      status: post.status,
+      authorId: post.authorId,
+      reviewerId: post.reviewerId,
+      author: new User({
+        id: post.author.id,
+        name: post.author.name,
+        email: post.author.email,
+      }),
+    });
   }
 
   async create(post: Post): Promise<Post> {
@@ -71,11 +107,11 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to create post');
     }
     const data = await response.json();
-    const createdPost = postSchema(data);
-    if (createdPost instanceof type.errors) {
+    const created = schema(data);
+    if (created instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return toPost(createdPost);
+    return new Post(created);
   }
 
   async update(post: Post): Promise<Post> {
@@ -91,10 +127,10 @@ export class PostRepositoryImpl implements PostRepository {
       throw new Error('Failed to update post');
     }
     const data = await response.json();
-    const updatedPost = postSchema(data);
-    if (updatedPost instanceof type.errors) {
+    const updated = schema(data);
+    if (updated instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return toPost(updatedPost);
+    return new Post(updated);
   }
 }

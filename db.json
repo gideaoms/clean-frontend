@@ -2,87 +2,32 @@
   "posts": [
     {
       "id": "1",
-      "title": "Hello from json-server",
-      "body": "This post lives in db.json and is served locally.",
-      "status": "published",
-      "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
-      },
-      "reviewer": {
-        "id": "2",
-        "name": "Alice",
-        "email": "alice@mail.com"
-      }
-    },
-    {
-      "id": "2",
-      "title": "Second post",
-      "body": "Edit or create posts in the app and watch db.json change.",
-      "status": "draft",
-      "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
-      }
-    },
-    {
-      "id": "IqE5PdOjwwg",
-      "title": "rtew",
-      "body": "fsg",
-      "status": "draft",
-      "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
-      },
-      "reviewer": {
-        "id": "2",
-        "name": "Alice",
-        "email": "alice@mail.com"
-      }
-    },
-    {
-      "id": "-FL8CnD4Ur0",
-      "title": "trwr",
-      "body": "fsg",
-      "status": "draft",
-      "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
-      }
-    },
-    {
-      "id": "pUTZN5PrzGg",
       "title": "title1",
       "body": "body1",
-      "status": "draft",
+      "status": "published",
+      "authorId": "2",
+      "reviewerId": "2",
       "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
-      },
-      "reviewer": {
-        "id": "2",
-        "name": "Alice",
-        "email": "alice@mail.com"
+        "id": "",
+        "name": "",
+        "email": ""
       }
     },
     {
-      "id": "VIXPxkJZ_Kg",
+      "id": "MnTHqfw2A6M",
       "title": "title2",
       "body": "body2",
-      "status": "draft",
+      "status": "published",
+      "authorId": "2",
+      "reviewerId": "1",
       "author": {
-        "id": "1",
-        "name": "John",
-        "email": "john@mail.com"
+        "id": "",
+        "name": "",
+        "email": ""
       }
     }
   ],
-  "users": [
+  "authors": [
     {
       "id": "1",
       "name": "John",

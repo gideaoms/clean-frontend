@@ -38,32 +38,34 @@ type Action =
     };
 
 export function useContainer() {
-  const { id } = useParams();
-  const postId = id ?? '';
+  const params = useParams();
+  const postId = params.id ?? '';
   const isNew = !postId;
-  const session = useSession();
   const repository = useRepository();
   const client = useQueryClient();
   const navigate = useNavigate();
+  const session = useSession();
   const found = useSuspenseQuery({
     queryKey: ['posts', postId],
-    queryFn: () => (isNew ? null : repository.post.findOne(postId)),
+    queryFn: () => {
+      if (isNew) return null;
+      return repository.post.findOne(postId);
+    },
   });
-  const post =
-    found.data ?? new Post({ author: session.state.user ?? undefined });
+  const post = found.data ?? new Post({});
   const users = useSuspenseQuery({
     queryKey: ['users'],
     queryFn: repository.user.findMany,
   });
-  const reviewers = users.data.filter((it) => it.id !== post.author.id);
   const [title, setTitle] = useState(post.title);
   const [body, setBody] = useState(post.body);
-  const [reviewerId, setReviewerId] = useState(post.reviewer?.id ?? '');
+  const [reviewerId, setReviewerId] = useState(post.reviewerId);
   const [status, setStatus] = useState(post.status);
   const mutation = useMutation({
     mutationFn: isNew ? repository.post.create : repository.post.update,
-    onSuccess: (saved) =>
-      dispatch({ type: 'save_post/success', payload: saved }),
+    onSuccess: (saved) => {
+      dispatch({ type: 'save_post/success', payload: saved });
+    },
   });
 
   function dispatch(action: Action) {
@@ -95,11 +97,12 @@ export function useContainer() {
         action.payload.preventDefault();
         mutation.mutate(
           new Post({
-            ...post,
+            id: postId,
             title,
             body,
             status,
-            reviewer: reviewers.find((it) => it.id === reviewerId),
+            authorId: session.state.user?.id,
+            reviewerId,
           }),
         );
         break;
@@ -112,10 +115,10 @@ export function useContainer() {
     isNew,
     title,
     body,
-    author: post.author,
     reviewerId,
-    reviewers,
     status,
+    author: post.author,
+    users: users.data,
     statuses,
     isPending: mutation.isPending,
     error: mutation.error,

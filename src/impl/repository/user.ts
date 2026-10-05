@@ -5,17 +5,13 @@ import { sleep } from '../../util/sleep.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
-const userSchema = type({
+const schema = type({
   id: 'string',
   name: 'string',
   email: 'string',
 });
 
-const credentialsSchema = userSchema.and({
-  password: 'string',
-});
-
-function toUser(data: typeof userSchema.infer): User {
+function toUser(data: typeof schema.infer): User {
   return new User({
     id: data.id,
     name: data.name,
@@ -26,28 +22,42 @@ function toUser(data: typeof userSchema.infer): User {
 export class UserRepositoryImpl implements UserRepository {
   async findMany(): Promise<User[]> {
     await sleep(1000);
-    const response = await fetch(`${API_URL}/users`);
+    const response = await fetch(`${API_URL}/authors`);
     if (!response.ok) {
       throw new Error('Failed to fetch users');
     }
     const data = await response.json();
-    const users = userSchema.array()(data);
+    const users = schema.array()(data);
     if (users instanceof type.errors) {
       throw new Error('Invalid data');
     }
     return users.map(toUser);
   }
 
+  async findOne(id: string): Promise<User> {
+    await sleep(1000);
+    const response = await fetch(`${API_URL}/authors/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user');
+    }
+    const data = await response.json();
+    const user = schema(data);
+    if (user instanceof type.errors) {
+      throw new Error('Invalid data');
+    }
+    return toUser(user);
+  }
+
   async signIn(email: string, password: string): Promise<User> {
     await sleep(1000);
     const response = await fetch(
-      `${API_URL}/users?email=${encodeURIComponent(email)}`,
+      `${API_URL}/authors?email=${encodeURIComponent(email)}`,
     );
     if (!response.ok) {
       throw new Error('Failed to sign in');
     }
     const data = await response.json();
-    const users = credentialsSchema.array()(data);
+    const users = schema.and({ password: 'string' }).array()(data);
     if (users instanceof type.errors) {
       throw new Error('Invalid data');
     }

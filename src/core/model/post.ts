@@ -7,6 +7,8 @@ export declare namespace Post {
     title: string;
     body: string;
     status: Status;
+    authorId: string;
+    reviewerId?: string;
     author: User;
     reviewer?: User;
   };
@@ -17,6 +19,8 @@ export class Post {
   readonly title: string;
   readonly body: string;
   readonly status: Post.Status = 'draft';
+  readonly authorId: string;
+  readonly reviewerId?: string;
   readonly author: User;
   readonly reviewer?: User;
 
@@ -25,6 +29,8 @@ export class Post {
     this.title = props.title ?? '';
     this.body = props.body ?? '';
     this.status = props.status ?? 'draft';
+    this.authorId = props.authorId ?? '';
+    this.reviewerId = props.reviewerId;
     this.author = props.author ?? new User({});
     this.reviewer = props.reviewer;
   }

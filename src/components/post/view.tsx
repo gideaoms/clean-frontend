@@ -42,9 +42,7 @@ function Form() {
         <h1 className="text-xl font-semibold">
           {state.isNew ? 'New post' : 'Edit post'}
         </h1>
-        <p className="text-sm text-gray-500">
-          by {state.author.name || 'Unknown author'}
-        </p>
+        <p className="text-sm text-gray-500">by {state.author.name}</p>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <select
@@ -55,7 +53,7 @@ function Form() {
           }
         >
           <option value="">No reviewer</option>
-          {state.reviewers.map((it) => (
+          {state.users.map((it) => (
             <option key={it.id} value={it.id}>
               {it.name}
             </option>
