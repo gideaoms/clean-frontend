@@ -30,7 +30,7 @@ export function SignIn() {
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 w-full"
           onClick={() =>
             session.dispatch({
-              type: 'sign_in',
+              type: 'sign_in/request',
               payload: { email: state.email, password: state.password },
             })
           }

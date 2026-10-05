@@ -38,24 +38,24 @@ export class UserRepositoryImpl implements UserRepository {
     return users.map(toUser);
   }
 
-  async signIn(email: string, password: string): Promise<User | Error> {
+  async signIn(email: string, password: string): Promise<User> {
     await sleep(1000);
     const response = await fetch(
       `${API_URL}/users?email=${encodeURIComponent(email)}`,
     );
     if (!response.ok) {
-      return new Error('Failed to sign in');
+      throw new Error('Failed to sign in');
     }
     const data = await response.json();
     const users = credentialsSchema.array()(data);
     if (users instanceof type.errors) {
-      return new Error('Invalid data');
+      throw new Error('Invalid data');
     }
     const found = users.find(
       (it) => it.email === email && it.password === password,
     );
     if (!found) {
-      return new Error('Email and/or password incorrect');
+      throw new Error('Email and/or password incorrect');
     }
     return toUser(found);
   }

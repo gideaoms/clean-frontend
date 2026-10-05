@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { type } from 'arktype';
 import {
   createContext,
@@ -11,10 +12,15 @@ import { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
 
-type Action = {
-  type: 'sign_in';
-  payload: { email: string; password: string };
-};
+type Action =
+  | {
+      type: 'sign_in/request';
+      payload: { email: string; password: string };
+    }
+  | {
+      type: 'sign_in/success';
+      payload: User;
+    };
 
 type Session = {
   state: {
@@ -34,8 +40,11 @@ export function SessionProvider(props: { children: ReactNode }) {
   const repository = useRepository();
   const [user, setUser] = useState<User | null>(null);
   const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const mutation = useMutation({
+    mutationFn: (credentials: { email: string; password: string }) =>
+      repository.user.signIn(credentials.email, credentials.password),
+    onSuccess: (found) => dispatch({ type: 'sign_in/success', payload: found }),
+  });
 
   const onInit = useEffectEvent(() => {
     const raw = provider.storage.get(STORAGE_KEY);
@@ -60,31 +69,27 @@ export function SessionProvider(props: { children: ReactNode }) {
 
   useEffect(onInit, []);
 
-  async function dispatch(action: Action) {
+  function dispatch(action: Action) {
     switch (action.type) {
-      case 'sign_in': {
-        setIsAuthenticating(true);
-        const { email, password } = action.payload;
-        const found = await repository.user.signIn(email, password);
-        if (found instanceof Error) {
-          setError(found);
-          setIsAuthenticating(false);
-          return;
-        }
-        provider.storage.set(STORAGE_KEY, JSON.stringify(found));
-        setUser(found);
+      case 'sign_in/request': {
+        mutation.mutate(action.payload);
+        break;
+      }
+      case 'sign_in/success': {
+        provider.storage.set(STORAGE_KEY, JSON.stringify(action.payload));
+        setUser(action.payload);
         break;
       }
       default:
-        action.type satisfies never;
+        action satisfies never;
     }
   }
 
   const state = {
     user,
     isFetching,
-    error,
-    isAuthenticating,
+    error: mutation.error,
+    isAuthenticating: mutation.isPending,
   };
 
   return (
