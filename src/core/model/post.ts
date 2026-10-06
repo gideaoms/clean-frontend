@@ -34,4 +34,20 @@ export class Post {
     this.author = props.author ?? new User({});
     this.reviewer = props.reviewer;
   }
+
+  isPublished(): boolean {
+    return this.status === 'published';
+  }
+
+  isDraft(): boolean {
+    return this.status === 'draft';
+  }
+
+  isArchived(): boolean {
+    return this.status === 'archived';
+  }
+
+  hasReviewer(): boolean {
+    return this.reviewerId !== undefined && this.reviewerId !== null;
+  }
 }
