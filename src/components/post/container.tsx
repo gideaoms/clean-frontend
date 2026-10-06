@@ -3,7 +3,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import { type FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Post } from '../../core/model/post.ts';
 import { useRepository } from '../../impl/context/repository.tsx';
@@ -34,7 +34,7 @@ type Action =
     }
   | {
       type: 'save_post/request';
-      payload: FormEvent<HTMLFormElement>;
+      payload: SubmitEvent<HTMLFormElement>;
     };
 
 export function useContainer() {
