@@ -3,7 +3,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query';
-import { type SubmitEvent, useReducer, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Post } from '../../core/model/post.ts';
 import { useRepository } from '../../impl/context/repository.tsx';
@@ -37,20 +37,6 @@ type Action =
       payload: SubmitEvent<HTMLFormElement>;
     };
 
-type Action2 = {
-  type: 'test';
-};
-type State2 = {
-  name: string;
-};
-function reducer2(state: State2, action: Action2) {
-  switch (action.type) {
-    case 'test':
-      break;
-  }
-  return state;
-}
-
 export function useContainer() {
   const params = useParams();
   const postId = params.id ?? '';
@@ -81,8 +67,6 @@ export function useContainer() {
       dispatch({ type: 'save_post/success', payload: saved });
     },
   });
-
-  const [state2, dispatch2] = useReducer(reducer2, { name: '' });
 
   function dispatch(action: Action) {
     switch (action.type) {
