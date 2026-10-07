@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Link } from 'react-router';
-import { useContainer } from './container.tsx';
+import { useQuery } from './query.ts';
 
 export function Posts() {
   return (
@@ -39,7 +39,7 @@ function Skeleton() {
 }
 
 function List() {
-  const { state } = useContainer();
+  const { state } = useQuery();
 
   return (
     <div className="space-y-4">
