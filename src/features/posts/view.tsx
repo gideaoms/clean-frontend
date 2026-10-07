@@ -1,0 +1,83 @@
+import { Suspense } from 'react';
+import { Link } from 'react-router';
+import { useContainer } from './container.tsx';
+
+export function Posts() {
+  return (
+    <Suspense fallback={<Skeleton />}>
+      <List />
+    </Suspense>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="h-7 w-20 rounded bg-gray-200" />
+        <div className="h-9 w-24 rounded-md bg-gray-200" />
+      </div>
+      <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
+        {[1, 2, 3].map((it) => (
+          <li
+            key={it}
+            className="flex items-center justify-between gap-4 px-4 py-3"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-5 w-16 rounded bg-gray-200" />
+              <div className="flex flex-col gap-1">
+                <div className="h-4 w-40 rounded bg-gray-200" />
+                <div className="h-3 w-24 rounded bg-gray-200" />
+              </div>
+            </div>
+            <div className="h-4 w-10 rounded bg-gray-200" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function List() {
+  const { state } = useContainer();
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Posts</h1>
+        <Link
+          to="/posts/new"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          New post
+        </Link>
+      </div>
+      <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
+        {state.posts.map((it) => (
+          <li
+            key={it.id}
+            className="flex items-center justify-between gap-4 px-4 py-3"
+          >
+            <div className="flex items-center gap-3">
+              <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium uppercase text-gray-600">
+                {it.status}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-sm">{it.title}</span>
+                <span className="text-xs text-gray-500">
+                  by {it.author.name}
+                </span>
+              </div>
+            </div>
+            <Link
+              to={`/posts/${it.id}`}
+              className="text-sm font-medium text-blue-600 hover:underline"
+            >
+              View
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

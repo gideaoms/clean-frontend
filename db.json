@@ -59,5 +59,169 @@
       "password": "123456"
     }
   ],
+  "comments": [
+    {
+      "id": "sDEqPZ5tPVw",
+      "postId": "",
+      "content": "",
+      "authorId": ""
+    },
+    {
+      "id": "DSHdY0-XQx0",
+      "postId": "",
+      "content": "fsdf",
+      "authorId": "2"
+    },
+    {
+      "id": "drgCByFCXy0",
+      "postId": "MnTHqfw2A6M",
+      "content": "werw",
+      "authorId": "2"
+    },
+    {
+      "id": "yhi7WkeovGc",
+      "postId": "MnTHqfw2A6M",
+      "content": "yetryer",
+      "authorId": "2"
+    },
+    {
+      "id": "9_CwMFDyyLU",
+      "postId": "MnTHqfw2A6M",
+      "content": "fsdfds",
+      "authorId": "2"
+    },
+    {
+      "id": "8AWBLlTtb6Y",
+      "postId": "MnTHqfw2A6M",
+      "content": "fdsfs",
+      "authorId": "2"
+    },
+    {
+      "id": "Gso5-Yuq7No",
+      "postId": "MnTHqfw2A6M",
+      "content": "dsfsd",
+      "authorId": "2"
+    },
+    {
+      "id": "vov9nW0oWpE",
+      "postId": "1",
+      "content": "fdsfs",
+      "authorId": "2"
+    },
+    {
+      "id": "oVowU2to8EE",
+      "postId": "1",
+      "content": "dfsd",
+      "authorId": "2"
+    },
+    {
+      "id": "8lXeQItE0yk",
+      "postId": "1",
+      "content": "gfsgs",
+      "authorId": "2"
+    },
+    {
+      "id": "dbPEvGnz_tY",
+      "postId": "MnTHqfw2A6M",
+      "content": "fdsfds",
+      "authorId": "2"
+    },
+    {
+      "id": "FRrZQwjZ0Mg",
+      "postId": "MnTHqfw2A6M",
+      "content": "dfsd",
+      "authorId": "2"
+    },
+    {
+      "id": "EdFKqyGSNbM",
+      "postId": "MnTHqfw2A6M",
+      "content": "rewrw",
+      "authorId": "2"
+    },
+    {
+      "id": "sdiQVVvZ9JQ",
+      "postId": "MnTHqfw2A6M",
+      "content": "gfgs",
+      "authorId": "2"
+    },
+    {
+      "id": "fzxE9EHLuJc",
+      "postId": "MnTHqfw2A6M",
+      "content": "gfgs",
+      "authorId": "2"
+    },
+    {
+      "id": "vCjpW5wyW54",
+      "postId": "MnTHqfw2A6M",
+      "content": "fgdf",
+      "authorId": "2"
+    },
+    {
+      "id": "T2ZlCa_lYjQ",
+      "postId": "1",
+      "content": "dsfsdf",
+      "authorId": "2"
+    },
+    {
+      "id": "TkQZPgF3A2Y",
+      "postId": "MnTHqfw2A6M",
+      "content": "sdfgsd",
+      "authorId": "2"
+    },
+    {
+      "id": "plnfbLE9oeM",
+      "postId": "1",
+      "content": "dsf",
+      "authorId": "2"
+    },
+    {
+      "id": "zcdxQQKzWVk",
+      "postId": "1",
+      "content": "fdasfsa",
+      "authorId": "2"
+    },
+    {
+      "id": "l-rO_JjHgvQ",
+      "postId": "1",
+      "content": "sdfs",
+      "authorId": "2"
+    },
+    {
+      "id": "CutDtXdU1y4",
+      "postId": "1",
+      "content": "sasd",
+      "authorId": "2"
+    },
+    {
+      "id": "FZk4xFIYdzM",
+      "postId": "MnTHqfw2A6M",
+      "content": "fgsf",
+      "authorId": "2"
+    },
+    {
+      "id": "5g_PvTmMi3s",
+      "postId": "MnTHqfw2A6M",
+      "content": "fgsf",
+      "authorId": "2"
+    },
+    {
+      "id": "TrsvteMI9fc",
+      "postId": "1",
+      "content": "ttttt",
+      "authorId": "2"
+    },
+    {
+      "id": "sOc3I9gu7OM",
+      "postId": "1",
+      "content": "hgdh",
+      "authorId": "2"
+    },
+    {
+      "id": "_Su9huP6kmo",
+      "postId": "1",
+      "content": "A new comment",
+      "authorId": "2"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

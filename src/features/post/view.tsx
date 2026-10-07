@@ -36,7 +36,7 @@ function Form() {
   return (
     <form
       className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
-      onSubmit={(e) => dispatch({ type: 'save_post/request', payload: e })}
+      action={() => {}}
     >
       <div>
         <h1 className="text-xl font-semibold">
