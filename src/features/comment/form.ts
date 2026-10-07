@@ -20,7 +20,7 @@ const schema = type({
 
 export function useForm() {
   const session = useSession();
-  const user = session.state.user ?? new User({});
+  const user = session.user ?? new User({});
   const initial = { comment: new Comment({ authorId: user.id }), err: null };
   const repository = useRepository();
   const navigate = useNavigate();

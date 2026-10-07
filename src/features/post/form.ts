@@ -35,7 +35,7 @@ export function useForm() {
       return repository.post.findOne(postId);
     },
   });
-  const user = session.state.user ?? new User({});
+  const user = session.user ?? new User({});
   const post = found.data ?? new Post({ authorId: user.id });
   const initial = { post, err: null } satisfies State;
   const [state, action, isPending] = useActionState(reducer, initial);
