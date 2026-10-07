@@ -11,14 +11,6 @@ const schema = type({
   email: 'string',
 });
 
-function toUser(data: typeof schema.infer): User {
-  return new User({
-    id: data.id,
-    name: data.name,
-    email: data.email,
-  });
-}
-
 export class UserRepositoryImpl implements UserRepository {
   async findMany(): Promise<User[]> {
     await sleep(1000);
@@ -31,7 +23,13 @@ export class UserRepositoryImpl implements UserRepository {
     if (users instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return users.map(toUser);
+    return users.map((it) => {
+      return new User({
+        id: it.id,
+        name: it.name,
+        email: it.email,
+      });
+    });
   }
 
   async findOne(id: string): Promise<User> {
@@ -45,7 +43,11 @@ export class UserRepositoryImpl implements UserRepository {
     if (user instanceof type.errors) {
       throw new Error('Invalid data');
     }
-    return toUser(user);
+    return new User({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
   }
 
   async signIn(email: string, password: string): Promise<User> {
@@ -67,6 +69,10 @@ export class UserRepositoryImpl implements UserRepository {
     if (!found) {
       throw new Error('Email and/or password incorrect');
     }
-    return toUser(found);
+    return new User({
+      id: found.id,
+      name: found.name,
+      email: found.email,
+    });
   }
 }

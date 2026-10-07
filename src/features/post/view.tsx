@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Link, useParams } from 'react-router';
-import { useContainer } from './container.tsx';
+import { useForm } from './form.ts';
 
 export function PostForm() {
   const { id } = useParams();
@@ -31,76 +31,62 @@ function Skeleton() {
 }
 
 function Form() {
-  const { state, dispatch } = useContainer();
+  const form = useForm();
 
   return (
     <form
       className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
-      action={() => {}}
+      action={form.action}
     >
       <div>
         <h1 className="text-xl font-semibold">
-          {state.isNew ? 'New post' : 'Edit post'}
+          {form.isNew ? 'New post' : 'Edit post'}
         </h1>
-        <p className="text-sm text-gray-500">by {state.author.name}</p>
+        {!form.isNew && (
+          <p className="text-sm text-gray-500">
+            by {form.state.post.author.name}
+            {form.state.post.isPublished() && ' | Published'}
+          </p>
+        )}
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <select
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          value={state.reviewerId}
-          onChange={(e) =>
-            dispatch({ type: 'set_reviewer', payload: e.target.value })
-          }
-        >
-          <option value="">No reviewer</option>
-          {state.users.map((it) => (
-            <option key={it.id} value={it.id}>
-              {it.name}
-            </option>
-          ))}
-        </select>
-        <select
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          value={state.status}
-          onChange={(e) =>
-            dispatch({
-              type: 'set_status',
-              payload: e.target.value,
-            })
-          }
-        >
-          {state.statuses.map((it) => (
-            <option key={it} value={it}>
-              {it}
-            </option>
-          ))}
-        </select>
-      </div>
+      <input name="id" defaultValue={form.state.post.id} hidden />
+      <input name="authorId" defaultValue={form.state.post.authorId} hidden />
+      <select
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        defaultValue={form.state.post.status}
+        name="status"
+      >
+        <option value="">Select a option...</option>
+        <option value="draft">Draft</option>
+        <option value="published">Published</option>
+        <option value="archived">Archived</option>
+      </select>
       <input
         className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        value={state.title}
-        onChange={(e) =>
-          dispatch({ type: 'set_title', payload: e.target.value })
-        }
+        defaultValue={form.state.post.title}
         placeholder="Title"
+        name="title"
         required
       />
       <textarea
         className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 min-h-32"
-        value={state.body}
-        onChange={(e) =>
-          dispatch({ type: 'set_body', payload: e.target.value })
-        }
+        defaultValue={form.state.post.body}
         placeholder="Body"
+        name="body"
         required
       />
+      {form.state.err ? (
+        <div className="bg-red-100 border border-red-400 p-2 rounded-md">
+          <p className="text-sm text-red-600">{form.state.err.message}</p>
+        </div>
+      ) : null}
       <div className="flex items-center gap-4">
         <button
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           type="submit"
-          disabled={state.isPending}
+          disabled={form.isPending}
         >
-          {state.isPending ? 'Saving...' : 'Save'}
+          {form.isPending ? 'Saving...' : 'Save'}
         </button>
         <Link
           to="/"
@@ -109,9 +95,6 @@ function Form() {
           Back
         </Link>
       </div>
-      {state.error ? (
-        <p className="text-sm text-red-600">{state.error.message}</p>
-      ) : null}
     </form>
   );
 }

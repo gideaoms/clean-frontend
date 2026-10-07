@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { Posts } from '../../components/posts/view.tsx';
 import { useForm } from './form.ts';
 
@@ -27,13 +28,21 @@ export function Comment() {
           <p className="text-sm text-red-600">{form.state.err.message}</p>
         </div>
       ) : null}
-      <button
-        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        type="submit"
-        disabled={form.isPending}
-      >
-        {form.isPending ? 'Submitting...' : 'Submit'}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          type="submit"
+          disabled={form.isPending}
+        >
+          {form.isPending ? 'Submitting...' : 'Submit'}
+        </button>
+        <Link
+          to="/"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          Back
+        </Link>
+      </div>
     </form>
   );
 }

@@ -45,12 +45,20 @@ function List() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Posts</h1>
-        <Link
-          to="/posts/new"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          New post
-        </Link>
+        <div className="space-x-4">
+          <Link
+            to="/posts/new"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            New post
+          </Link>
+          <Link
+            to="/comments/new"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            New comment
+          </Link>
+        </div>
       </div>
       <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
         {state.posts.map((it) => (

@@ -40,8 +40,8 @@ export function useForm() {
         err: new Error(validated.summary),
       };
     }
-    const comment = new Comment(data);
     try {
+      const comment = new Comment(validated);
       const created = await repository.comment.create(comment);
       client.setQueryData<Comment[]>(['comments'], (prev = []) => [
         created,
@@ -51,7 +51,7 @@ export function useForm() {
       return { comment: created, err: null };
     } catch (err) {
       if (err instanceof Error) {
-        return { comment, err };
+        return { comment: new Comment(data), err };
       }
       throw err;
     }
