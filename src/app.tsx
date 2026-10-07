@@ -1,4 +1,3 @@
-import { Suspense, startTransition } from 'react';
 import { Route, Routes } from 'react-router';
 import { Comment } from './features/comment/view.tsx';
 import { PostForm } from './features/post/view.tsx';
@@ -8,6 +7,10 @@ import { useSession } from './impl/context/session.tsx';
 
 export function App() {
   const session = useSession();
+
+  if (session.isPending) {
+    return <p>Loading...</p>;
+  }
 
   if (!session.user) {
     return <SignIn />;
@@ -28,9 +31,7 @@ export function App() {
             type="button"
             className="text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
             onClick={() => {
-              startTransition(() => {
-                session.dispatch({ type: 'finish_session' });
-              });
+              session.dispatch({ type: 'finish_session' });
             }}
           >
             Sign out
@@ -38,16 +39,12 @@ export function App() {
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-4 py-6">
-        <Suspense
-          fallback={<p className="text-sm text-gray-500">Loading...</p>}
-        >
-          <Routes>
-            <Route index path="/" element={<Posts />} />
-            <Route path="posts/new" element={<PostForm />} />
-            <Route path="posts/:id" element={<PostForm />} />
-            <Route path="comments/new" element={<Comment />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route index path="/" element={<Posts />} />
+          <Route path="posts/new" element={<PostForm />} />
+          <Route path="posts/:id" element={<PostForm />} />
+          <Route path="comments/new" element={<Comment />} />
+        </Routes>
       </main>
     </div>
   );

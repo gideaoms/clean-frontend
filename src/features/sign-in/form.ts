@@ -1,5 +1,5 @@
 import { type } from 'arktype';
-import { startTransition, useActionState } from 'react';
+import { useActionState } from 'react';
 import { useRepository } from '../../impl/context/repository.tsx';
 import { useSession } from '../../impl/context/session.tsx';
 
@@ -38,9 +38,7 @@ export function useForm() {
     try {
       const { email, password } = validated;
       const user = await repository.user.signIn(email, password);
-      startTransition(() => {
-        session.dispatch({ type: 'start_session', payload: user });
-      });
+      session.dispatch({ type: 'start_session', payload: user });
       return { user: payload, err: null };
     } catch (err) {
       if (err instanceof Error) {
