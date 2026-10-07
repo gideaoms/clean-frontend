@@ -18,7 +18,8 @@
     "rules": {
       "preset": "recommended",
       "correctness": {
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "error",
+        "useImportExtensions": "error"
       }
     }
   },

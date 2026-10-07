@@ -1,31 +1,30 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { type } from 'arktype';
-import { createContext, type ReactNode, useContext, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import { useNavigate } from 'react-router';
-import { User } from '../../core/model/user.ts';
+import type { User } from '../../core/model/user.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
 
 type Action =
   | {
-      type: 'sign_in/request';
-      payload: { email: string; password: string };
-    }
-  | {
-      type: 'sign_in/success';
+      type: 'start_session';
       payload: User;
     }
   | {
-      type: 'sign_out';
+      type: 'finish_session';
     };
 
 type Session = {
-  state: {
-    user: User | null;
-    isAuthenticating: boolean;
-    error: Error | null;
-  };
+  user: User | null;
   dispatch: (action: Action) => void;
+  isPending: boolean;
 };
 
 const Context = createContext<Session | null>(null);
@@ -36,46 +35,41 @@ export function SessionProvider(props: { children: ReactNode }) {
   const repository = useRepository();
   const client = useQueryClient();
   const navigate = useNavigate();
-  const [user, setUser] = useState(() => {
-    const raw = provider.storage.get(STORAGE_KEY);
-    if (!raw) {
-      return null;
+  const [user, setUser] = useState<User | null>(null);
+  const [isPending, setIsPending] = useState(true);
+
+  const onInit = useEffectEvent(async () => {
+    const id = provider.storage.get(STORAGE_KEY);
+    if (!id) {
+      setIsPending(false);
+      return;
     }
-    const schema = type({
-      id: 'string',
-      name: 'string',
-      email: 'string',
-    });
-    const found = schema(JSON.parse(raw));
-    if (found instanceof type.errors) {
+    try {
+      const found = await repository.user.findOne(id);
+      setUser(found);
+    } catch {
       provider.storage.remove(STORAGE_KEY);
-      return null;
+    } finally {
+      setIsPending(false);
     }
-    return new User(found);
   });
-  const mutation = useMutation({
-    mutationFn: (credentials: { email: string; password: string }) =>
-      repository.user.signIn(credentials.email, credentials.password),
-    onSuccess: (found) => dispatch({ type: 'sign_in/success', payload: found }),
-  });
+
+  useEffect(() => {
+    onInit();
+  }, []);
 
   function dispatch(action: Action) {
     switch (action.type) {
-      case 'sign_in/request': {
-        mutation.mutate(action.payload);
-        break;
-      }
-      case 'sign_in/success': {
-        provider.storage.set(STORAGE_KEY, JSON.stringify(action.payload));
+      case 'start_session': {
+        provider.storage.set(STORAGE_KEY, action.payload.id);
         setUser(action.payload);
         break;
       }
-      case 'sign_out': {
+      case 'finish_session': {
         provider.storage.remove(STORAGE_KEY);
-        setUser(null);
-        mutation.reset();
         client.clear();
         navigate('/', { replace: true });
+        setUser(null);
         break;
       }
       default:
@@ -83,14 +77,8 @@ export function SessionProvider(props: { children: ReactNode }) {
     }
   }
 
-  const state = {
-    user,
-    error: mutation.error,
-    isAuthenticating: mutation.isPending,
-  };
-
   return (
-    <Context.Provider value={{ state, dispatch }}>
+    <Context.Provider value={{ dispatch, isPending, user }}>
       {props.children}
     </Context.Provider>
   );

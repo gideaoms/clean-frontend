@@ -11,6 +11,7 @@ import { SessionProvider } from './impl/context/session.tsx';
 
 const client = new QueryClient();
 
+// biome-ignore lint/style/noNonNullAssertion: root element exists
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={client}>

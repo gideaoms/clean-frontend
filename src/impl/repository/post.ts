@@ -1,8 +1,8 @@
 import { type } from 'arktype';
 import { Post } from '../../core/model/post.ts';
+import { User } from '../../core/model/user.ts';
 import type { PostRepository } from '../../core/repository/post.ts';
 import { sleep } from '../../util/sleep.ts';
-import { User } from '../../core/model/user.ts';
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
@@ -12,7 +12,6 @@ const schema = type({
   body: 'string',
   status: "'draft' | 'published' | 'archived'",
   authorId: 'string',
-  'reviewerId?': 'string',
 });
 
 export class PostRepositoryImpl implements PostRepository {
@@ -34,7 +33,6 @@ export class PostRepositoryImpl implements PostRepository {
         name: 'string',
         email: 'string',
       },
-      'reviewerId?': 'string',
     }).array()(data);
     if (posts instanceof type.errors) {
       throw new Error('Invalid data');
@@ -46,7 +44,6 @@ export class PostRepositoryImpl implements PostRepository {
         body: it.body,
         status: it.status,
         authorId: it.authorId,
-        reviewerId: it.reviewerId,
         author: new User({
           id: it.author.id,
           name: it.author.name,
@@ -74,7 +71,6 @@ export class PostRepositoryImpl implements PostRepository {
         name: 'string',
         email: 'string',
       },
-      'reviewerId?': 'string',
     })(data);
     if (post instanceof type.errors) {
       throw new Error('Invalid data');
@@ -85,7 +81,6 @@ export class PostRepositoryImpl implements PostRepository {
       body: post.body,
       status: post.status,
       authorId: post.authorId,
-      reviewerId: post.reviewerId,
       author: new User({
         id: post.author.id,
         name: post.author.name,
@@ -101,7 +96,12 @@ export class PostRepositoryImpl implements PostRepository {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(post),
+      body: JSON.stringify({
+        title: post.title,
+        body: post.body,
+        status: post.status,
+        authorId: post.authorId,
+      }),
     });
     if (!response.ok) {
       throw new Error('Failed to create post');
@@ -121,7 +121,13 @@ export class PostRepositoryImpl implements PostRepository {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(post),
+      body: JSON.stringify({
+        id: post.id,
+        title: post.title,
+        body: post.body,
+        status: post.status,
+        authorId: post.authorId,
+      }),
     });
     if (!response.ok) {
       throw new Error('Failed to update post');

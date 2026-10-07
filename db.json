@@ -2,29 +2,17 @@
   "posts": [
     {
       "id": "1",
-      "title": "title1",
-      "body": "body1",
-      "status": "published",
-      "authorId": "2",
-      "reviewerId": "2",
-      "author": {
-        "id": "",
-        "name": "",
-        "email": ""
-      }
+      "title": "First Post",
+      "body": "This is the first post.",
+      "status": "archived",
+      "authorId": "1"
     },
     {
-      "id": "MnTHqfw2A6M",
-      "title": "title2",
-      "body": "body2",
-      "status": "published",
-      "authorId": "2",
-      "reviewerId": "1",
-      "author": {
-        "id": "",
-        "name": "",
-        "email": ""
-      }
+      "title": "title 5",
+      "body": "body 5",
+      "status": "draft",
+      "authorId": "1",
+      "id": "a5S-uwuQHSI"
     }
   ],
   "authors": [
@@ -33,30 +21,20 @@
       "name": "John",
       "email": "john@mail.com",
       "password": "123456"
+    }
+  ],
+  "comments": [
+    {
+      "id": "QPaQqmfOzds",
+      "postId": "1",
+      "content": "test 55",
+      "authorId": "1"
     },
     {
-      "id": "2",
-      "name": "Alice",
-      "email": "alice@mail.com",
-      "password": "123456"
-    },
-    {
-      "id": "3",
-      "name": "Bob",
-      "email": "bob@mail.com",
-      "password": "123456"
-    },
-    {
-      "id": "4",
-      "name": "Carol",
-      "email": "carol@mail.com",
-      "password": "123456"
-    },
-    {
-      "id": "5",
-      "name": "Dave",
-      "email": "dave@mail.com",
-      "password": "123456"
+      "id": "_7WyUYSuczI",
+      "postId": "a5S-uwuQHSI",
+      "content": "test",
+      "authorId": "1"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
