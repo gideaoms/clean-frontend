@@ -8,10 +8,6 @@ import { useSession } from './impl/context/session.tsx';
 export function App() {
   const session = useSession();
 
-  if (session.isPending) {
-    return <p>Loading...</p>;
-  }
-
   if (!session.user) {
     return <SignIn />;
   }
@@ -31,7 +27,7 @@ export function App() {
             type="button"
             className="text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
             onClick={() => {
-              session.dispatch({ type: 'finish_session' });
+              session.dispatch({ type: 'session/finish' });
             }}
           >
             Sign out
