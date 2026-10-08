@@ -74,7 +74,8 @@ export function SessionProvider(props: { children: ReactNode }) {
     if (!userId) {
       return null;
     }
-    return getUserFromAPI(userId);
+    const user = await getUserFromAPI(userId);
+    return user;
   }
 
   const promise = loadUser();
@@ -105,7 +106,7 @@ export function useSession() {
 
 export function App() {
   const session = useSession();
-  const user = session.user ?? use(session.promise);
+  const user = session.user;
 
   console.log('rendered [App]', Math.random());
 
