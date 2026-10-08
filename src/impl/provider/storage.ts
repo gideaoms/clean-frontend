@@ -1,7 +1,7 @@
 import type { StorageProvider } from '../../core/provider/storage.ts';
 
 export class StorageProviderImpl implements StorageProvider {
-  get(key: string): string | null {
+  async get(key: string): Promise<string | null> {
     try {
       return localStorage.getItem(key);
     } catch {
@@ -9,11 +9,11 @@ export class StorageProviderImpl implements StorageProvider {
     }
   }
 
-  set(key: string, value: string): void {
+  async set(key: string, value: string): Promise<void> {
     localStorage.setItem(key, value);
   }
 
-  remove(key: string): void {
+  async remove(key: string): Promise<void> {
     localStorage.removeItem(key);
   }
 }
