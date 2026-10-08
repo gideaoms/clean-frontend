@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createContext, type ReactNode, useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { User } from '../../core/model/user.ts';
-import { invalidate, useSuspense } from '../../util/suspense.ts';
+import { useSuspense } from '../../util/suspense.ts';
 import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
 
@@ -50,13 +50,11 @@ export function SessionProvider(props: { children: ReactNode }) {
     switch (action.type) {
       case 'session/start': {
         provider.storage.set(STORAGE_KEY, action.payload.id);
-        invalidate(SUSPENSE_KEY);
         setUser(action.payload);
         break;
       }
       case 'session/finish': {
         provider.storage.remove(STORAGE_KEY);
-        invalidate(SUSPENSE_KEY);
         client.clear();
         setUser(null);
         navigate('/', { replace: true });

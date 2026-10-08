@@ -15,7 +15,3 @@ export function useSuspense<T>(props: {
   }
   return use(result);
 }
-
-export function invalidate(key: string) {
-  cache.delete(key);
-}
