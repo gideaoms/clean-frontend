@@ -70,6 +70,7 @@ Here's the version I write now:
 ```tsx
 import { type } from 'arktype';
 import { Fragment, Suspense, use, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const URL = 'https://jsonplaceholder.typicode.com/todos?_limit=10';
 
@@ -107,9 +108,11 @@ export function TodoList() {
       <button type="button" onClick={() => setPage((page) => page + 1)}>
         next
       </button>
-      <Suspense fallback={<p>Loading...</p>}>
-        <Todos promise={promise} />
-      </Suspense>
+      <ErrorBoundary fallback={<p>Could not load todos.</p>}>
+        <Suspense fallback={<p>Loading...</p>}>
+          <Todos promise={promise} />
+        </Suspense>
+      </ErrorBoundary>
     </Fragment>
   );
 }
@@ -137,7 +140,7 @@ A few things I like about this:
 
 **The component reads data like it's already there.** Inside `Todos`, `use(props.promise)` gives me a `Todo[]`. Not `Todo[] | undefined`, not an empty array placeholder. By the time that line runs, the data exists. The rest of the component is just rendering.
 
-**Errors go where errors belong.** If `findMany` throws, `use` re-throws it during render, and the nearest error boundary catches it. My list component doesn't need a `try/catch` or an `error` state. One error boundary near the top of the screen handles it for everything below.
+**Errors are a place too.** If `findMany` throws, `use` re-throws it during render, and the `<ErrorBoundary>` around it shows its fallback instead. `Todos` doesn't need a `try/catch` or an `error` state. React only ships error boundaries as class components, so I use the small [react-error-boundary](https://github.com/bvaughn/react-error-boundary) package instead of writing one myself. Its `resetKeys={[page]}` prop means that when the user clicks "next" after a failure, the boundary resets and tries again with the new page.
 
 ---
 
