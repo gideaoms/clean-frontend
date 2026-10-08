@@ -1,6 +1,6 @@
 import { type } from 'arktype';
 import { Fragment, Suspense, useState } from 'react';
-import { useSuspense } from './util/suspense.ts';
+import { useSuspense } from '../util/suspense.ts';
 
 const URL = 'https://jsonplaceholder.typicode.com/todos?_limit=10';
 

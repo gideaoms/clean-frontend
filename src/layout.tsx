@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router';
-import { Header } from '../components/header/header.tsx';
-import { Comment } from '../features/comment/view.tsx';
-import { PostForm } from '../features/post/view.tsx';
-import { Posts } from '../features/posts/view.tsx';
-import { SignIn } from '../features/sign-in/view.tsx';
-import { useSession } from '../impl/context/session.tsx';
+import { Header } from './components/header/header.tsx';
+import { Comment } from './features/comment/view.tsx';
+import { PostForm } from './features/post/view.tsx';
+import { Posts } from './features/posts/view.tsx';
+import { SignIn } from './features/sign-in/view.tsx';
+import { useSession } from './impl/context/session.tsx';
 
 export function Layout() {
   const session = useSession();

@@ -16,7 +16,7 @@ export function Header() {
           type="button"
           className="text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer"
           onClick={() => {
-            session.dispatch({ type: 'session/finish' });
+            session.logout();
           }}
         >
           Sign out

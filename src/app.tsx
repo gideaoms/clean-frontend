@@ -1,21 +1,27 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router';
-import { Root } from './app/root.tsx';
 import { ProviderProvider } from './impl/context/provider.tsx';
 import { RepositoryProvider } from './impl/context/repository.tsx';
+import { SessionProvider } from './impl/context/session.tsx';
+import { Layout } from './layout.tsx';
 
 const client = new QueryClient();
 
 export function App() {
   return (
-    <QueryClientProvider client={client}>
-      <BrowserRouter>
-        <ProviderProvider>
-          <RepositoryProvider>
-            <Root />
-          </RepositoryProvider>
-        </ProviderProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <Suspense fallback={<p>Loading...</p>}>
+      <QueryClientProvider client={client}>
+        <BrowserRouter>
+          <ProviderProvider>
+            <RepositoryProvider>
+              <SessionProvider>
+                <Layout />
+              </SessionProvider>
+            </RepositoryProvider>
+          </ProviderProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </Suspense>
   );
 }

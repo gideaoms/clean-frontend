@@ -38,7 +38,7 @@ export function useForm() {
     try {
       const { email, password } = validated;
       const user = await repository.user.signIn(email, password);
-      session.dispatch({ type: 'session/start', payload: user });
+      await session.login(user);
       return { user: payload, err: null };
     } catch (err) {
       if (err instanceof Error) {

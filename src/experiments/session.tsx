@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext, useState } from 'react';
-import { setSuspense, useSuspense } from './util/suspense.ts';
+import { setSuspense, useSuspense } from '../util/suspense.ts';
 
 type User = {
   id: string;
