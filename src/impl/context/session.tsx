@@ -32,7 +32,7 @@ export function SessionProvider(props: {
   promise: Promise<User | null>;
   children: ReactNode;
 }) {
-  console.log('RENDERED');
+  console.log('user promise', props.promise);
   const provider = useProvider();
   const client = useQueryClient();
   const navigate = useNavigate();
