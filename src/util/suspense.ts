@@ -25,3 +25,8 @@ export function clearSuspense(key?: (string | number)[]) {
   }
   cache.clear();
 }
+
+export function setSuspense<T>(props: { key: (string | number)[]; value: T }) {
+  const key = props.key.join(JOINER);
+  cache.set(key, props.value);
+}

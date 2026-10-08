@@ -1,11 +1,5 @@
-import {
-  createContext,
-  type ReactNode,
-  Suspense,
-  use,
-  useContext,
-  useState,
-} from 'react';
+import { createContext, type ReactNode, useContext, useState } from 'react';
+import { setSuspense, useSuspense } from './util/suspense.ts';
 
 type User = {
   id: string;
@@ -15,7 +9,6 @@ type Context = {
   user: User | null;
   login: (user: User) => Promise<void>;
   logout: () => Promise<void>;
-  promise: Promise<User | null>;
 };
 
 const Context = createContext<Context | null>(null);
@@ -43,8 +36,7 @@ async function clearUserIdInStorage() {
   return localStorage.removeItem(STORAGE_KEY);
 }
 
-async function getUserFromAPI(userId: string) {
-  // await sleep(1_000);
+async function getUserFromAPI(userId: string): Promise<User | null> {
   if (userId === '1') {
     return USERS[0];
   }
@@ -55,44 +47,47 @@ async function getUserFromAPI(userId: string) {
 }
 
 export function SessionProvider(props: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const found = useSuspense({
+    key: [],
+    fn: () => {
+      console.log('Entered Suspense');
+      return loadUser();
+    },
+  });
+  const [user, setUser] = useState(found);
   console.log('rendered [SessionProvider]', Math.random());
 
   async function logout() {
     await clearUserIdInStorage();
+    setSuspense({ key: [], value: null });
     setUser(null);
   }
 
   async function login(user: User) {
     await addUserIdToStorage(user.id);
+    setSuspense({ key: [], value: user });
     setUser(user);
   }
 
   async function loadUser() {
     const userId = await getUserIdFromStorage();
-    console.log('userId', userId);
+    console.log('userId [LocalStorage]', userId);
     if (!userId) {
       return null;
     }
-    const user = await getUserFromAPI(userId);
-    return user;
+    return getUserFromAPI(userId);
   }
 
-  const promise = loadUser();
-
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <Context.Provider
-        value={{
-          user,
-          login,
-          logout,
-          promise,
-        }}
-      >
-        {props.children}
-      </Context.Provider>
-    </Suspense>
+    <Context.Provider
+      value={{
+        user,
+        login,
+        logout,
+      }}
+    >
+      {props.children}
+    </Context.Provider>
   );
 }
 
@@ -106,11 +101,10 @@ export function useSession() {
 
 export function App() {
   const session = useSession();
-  const user = session.user;
 
   console.log('rendered [App]', Math.random());
 
-  if (!user) {
+  if (!session.user) {
     return (
       <div>
         <button
@@ -136,7 +130,7 @@ export function App() {
 
   return (
     <div>
-      <p>Welcome: {user.name}</p>
+      <p>Welcome: {session.user.name}</p>
       <button
         type="button"
         onClick={() => {
