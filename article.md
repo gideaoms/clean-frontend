@@ -1,10 +1,10 @@
-# My React Views Only Do Two Things: Read State and Send Events
+# My React Views Only Do Two Things: Read State and Submit Actions
 
 Do you remember **container/presentational components**? A few years ago, a lot of React code split each component in two: a "smart" container that held the logic, and a "dumb" component that only rendered what it received. When hooks arrived, most of us stopped doing that.
 
 Recently I've been using a small variation of that idea, and I've liked it enough that I want to share it. Nothing revolutionary, just a habit that has made my screens easier to read.
 
-The idea is simple: **the view only reads `state` and sends events with `dispatch`. All the logic lives in one hook.**
+The idea is simple: **the view only reads `state` and hands the form to an `action`. All the logic lives in one hook.**
 
 ---
 
@@ -44,36 +44,34 @@ So I started splitting each screen into two files.
 
 ```
 new-post/
-  container.tsx   ← state and logic
-  view.tsx        ← JSX
+  form.ts     ← state and logic
+  view.tsx    ← JSX
 ```
 
-The container exports one hook, `useContainer()`, which returns two things:
+The logic file exports one hook, `useForm()`, which returns three things:
 
 - `state`: everything the view needs to render
-- `dispatch`: the only way the view can say "something happened"
+- `action`: the function the `<form>` calls when it's submitted
+- `isPending`: whether that action is still running
 
 Here's the example I'll use: a form to create a blog post, with a title, a body and a status.
 
 ---
 
-## The container
+## The form hook
 
-```tsx
-// new-post/container.tsx
-import { type FormEvent, useState } from 'react';
+```ts
+// new-post/form.ts
+import { useActionState } from 'react';
 
-type Status = 'draft' | 'published';
+type Post = { title: string; body: string; };
 
-type Post = { title: string; body: string; status: Status };
+type State = {
+  post: Post;
+  error: string | null;
+};
 
-type Action =
-  | { type: 'set_title'; payload: string }
-  | { type: 'set_body'; payload: string }
-  | { type: 'set_status'; payload: string }
-  | { type: 'save_post/request'; payload: FormEvent<HTMLFormElement> }
-  | { type: 'save_post/success'; payload: Post }
-  | { type: 'save_post/failure'; payload: string };
+const empty: Post = { title: '', body: '' };
 
 async function createPost(input: Post): Promise<Post> {
   const response = await fetch('/api/posts', {
@@ -87,76 +85,39 @@ async function createPost(input: Post): Promise<Post> {
   return response.json();
 }
 
-export function useContainer() {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [status, setStatus] = useState<Status>('draft');
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function useForm() {
+  const initial = { post: empty, error: null } satisfies State;
+  const [state, action, isPending] = useActionState(reducer, initial);
 
-  async function savePost() {
+  async function reducer(_prev: State, form: FormData): Promise<State> {
+    const post: Post = {
+      title: form.get('title')?.toString() ?? '',
+      body: form.get('body')?.toString() ?? '',
+    };
+    if (!post.title || !post.body) {
+      return { post, error: 'Title and body are required.' };
+    }
     try {
-      const post = await createPost({ title, body, status });
-      dispatch({ type: 'save_post/success', payload: post });
+      await createPost(post);
+      return { post: empty, error: null };
     } catch {
-      dispatch({ type: 'save_post/failure', payload: 'Could not save your post. Try again.' });
+      return { post, error: 'Could not save your post. Try again.' };
     }
   }
 
-  function dispatch(action: Action) {
-    switch (action.type) {
-      case 'set_title':
-        setTitle(action.payload);
-        break;
-      case 'set_body':
-        setBody(action.payload);
-        break;
-      case 'set_status':
-        setStatus(action.payload as Status);
-        break;
-      case 'save_post/request':
-        action.payload.preventDefault();
-        setIsSaving(true);
-        setError(null);
-        savePost();
-        break;
-      case 'save_post/success':
-        setIsSaving(false);
-        setTitle('');
-        setBody('');
-        setStatus('draft');
-        break;
-      case 'save_post/failure':
-        setIsSaving(false);
-        setError(action.payload);
-        break;
-      default:
-        action satisfies never;
-    }
-  }
-
-  const state = {
-    title,
-    body,
-    status,
-    statuses: ['draft', 'published'],
-    isSaving,
-    error,
-  };
-
-  return { state, dispatch };
+  return { state, action, isPending };
 }
 ```
 
 A few things I like about this:
 
-**The `Action` type reads like a summary of the screen.** Before opening the JSX, I already know everything that can happen here: the user can edit three fields and save, and saving can succeed or fail.
+**It reads like a reducer, because it is one.** `useActionState` takes a function that receives the previous state and the submitted `FormData`, and returns the next state. The only difference from a classic reducer is that it's allowed to be `async`, so the request lives right there, between reading the form and returning the result.
 
-**Async results are events too.** The request doesn't set state on its own. When it finishes, it calls `dispatch` with `save_post/success` or `save_post/failure`. So every change on this screen, whether it came from the user or from the server, goes through the same `switch`. When something looks wrong, there's one place to look.
+**No more loading and error flags to juggle.** `isPending` comes for free from React. I don't call `setIsSaving(true)` before the request and `setIsSaving(false)` in a `finally`. The error is just part of the state the reducer returns.
 
-**`action satisfies never` keeps me honest.** If I add a new action and forget to handle it, TypeScript complains.
+**Every outcome is a return value.** Validation failed? Return the state with an error. The request failed? Return the state with an error. It worked? Return a clean state. There's one function and every path out of it ends in a `return`, so when something looks wrong, there's one place to look.
 
-**`state` is shaped for the view.** The view doesn't need to know where the list of statuses comes from or how saving works. It gets exactly what it needs to render.
+**Failed submissions keep what the user typed.** On error, the reducer returns the `post` it just read from the form, and the view uses it as the inputs' `defaultValue`. Nobody loses a long post because the network blinked.
 
 ---
 
@@ -164,54 +125,34 @@ A few things I like about this:
 
 ```tsx
 // new-post/view.tsx
-import { useContainer } from './container.tsx';
+import { useForm } from './form.ts';
 
 export function NewPost() {
-  const { state, dispatch } = useContainer();
+  const form = useForm();
 
   return (
-    <form onSubmit={(e) => dispatch({ type: 'save_post/request', payload: e })}>
-      <input
-        placeholder="Title"
-        value={state.title}
-        onChange={(e) => dispatch({ type: 'set_title', payload: e.target.value })}
-        required
-      />
-      <textarea
-        placeholder="Body"
-        value={state.body}
-        onChange={(e) => dispatch({ type: 'set_body', payload: e.target.value })}
-        required
-      />
-      <select
-        value={state.status}
-        onChange={(e) => dispatch({ type: 'set_status', payload: e.target.value })}
-      >
-        {state.statuses.map((it) => (
-          <option key={it} value={it}>
-            {it}
-          </option>
-        ))}
-      </select>
-      <button type="submit" disabled={state.isSaving}>
-        {state.isSaving ? 'Saving...' : 'Save'}
+    <form action={form.action}>
+      <input name="title" placeholder="Title" defaultValue={form.state.post.title} required />
+      <textarea name="body" placeholder="Body" defaultValue={form.state.post.body} required />
+      <button type="submit" disabled={form.isPending}>
+        {form.isPending ? 'Saving...' : 'Save'}
       </button>
-      {state.error ? <p role="alert">{state.error}</p> : null}
+      {form.state.error ? <p role="alert">{form.state.error}</p> : null}
     </form>
   );
 }
 ```
 
-That's the whole view. No `useState`, no `fetch`, no `try/catch`, no `preventDefault`. It reads `state`, and when something happens, it tells the container with `dispatch`.
+That's the whole view. No `useState`, no `fetch`, no `try/catch`, no `preventDefault`, and not even an `onChange`. The inputs are uncontrolled: they have a `name`, and the browser keeps their value until the form is submitted. The view reads `state`, and when the user hits Save, the whole form goes to `action`.
 
-When I open a `view.tsx`, I'm only thinking about how the screen looks. When I open a `container.tsx`, I'm only thinking about how it behaves. I don't have to hold both in my head at the same time.
+When I open a `view.tsx`, I'm only thinking about how the screen looks. When I open a `form.ts`, I'm only thinking about how it behaves. I don't have to hold both in my head at the same time.
 
-And every screen follows the same shape, even the simple ones. A list page that only loads data still gets a `container.tsx` and a `view.tsx`, its hook just returns `{ state }` with no `dispatch`. After a while, I stopped having to think about where things go.
+And every screen follows the same shape, even the simple ones. A list page that only loads data gets a `query.ts` and a `view.tsx`, and its hook just returns `{ state }`. After a while, I stopped having to think about where things go.
 
 ---
 
 ## Wrapping up
 
-This isn't a library or a framework, just a convention: one hook per screen, one `state` object, one `dispatch` function, and a view that only reads and sends. It's an old idea in a slightly different shape, and it has made my components calmer to work with.
+This isn't a library or a framework, just a convention: one hook per screen, one `state` object, one `action` for the form, and a view that only reads and submits. It's an old idea in a slightly different shape, and it has made my components calmer to work with.
 
 I'm curious how other people handle this. **Do you keep logic and JSX together in the same component, or do you split them somehow? And if you split them, what does your version look like?**
