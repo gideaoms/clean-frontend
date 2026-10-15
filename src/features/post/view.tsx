@@ -3,10 +3,10 @@ import { Link, useParams } from 'react-router';
 import { useForm } from './form.ts';
 
 export function PostForm() {
-  const { id } = useParams();
+  const { id = 'new' } = useParams();
 
   return (
-    <Suspense key={id ?? 'new'} fallback={<Skeleton />}>
+    <Suspense key={id} fallback={<Skeleton />}>
       <Form />
     </Suspense>
   );
