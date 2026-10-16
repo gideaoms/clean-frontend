@@ -52,9 +52,9 @@ export function SessionProvider(props: { children: ReactNode }) {
 }
 
 export function useSession() {
-  const session = useContext(Context);
-  if (!session) {
+  const context = useContext(Context);
+  if (!context) {
     throw new Error('Session Context must be provided');
   }
-  return session;
+  return context;
 }

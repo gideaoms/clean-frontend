@@ -14,9 +14,9 @@ export function ProviderProvider(props: { children: ReactNode }) {
 }
 
 export function useProvider() {
-  const provider = useContext(Context);
-  if (!provider) {
+  const context = useContext(Context);
+  if (!context) {
     throw new Error('Provider Context must be provided');
   }
-  return provider;
+  return context;
 }

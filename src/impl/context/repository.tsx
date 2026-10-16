@@ -22,9 +22,9 @@ export function RepositoryProvider(props: { children: ReactNode }) {
 }
 
 export function useRepository() {
-  const repository = useContext(Context);
-  if (!repository) {
+  const context = useContext(Context);
+  if (!context) {
     throw new Error('Repository Context must be provided');
   }
-  return repository;
+  return context;
 }
