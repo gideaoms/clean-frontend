@@ -3,8 +3,8 @@ import { createContext, type ReactNode, useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { User } from '../../core/model/user.ts';
 import { setSuspense, useSuspense } from '../../util/suspense.ts';
-import { useProvider } from './provider.tsx';
 import { useRepository } from './repository.tsx';
+import { useProvider } from './service.tsx';
 
 type Session = {
   user: User | null;

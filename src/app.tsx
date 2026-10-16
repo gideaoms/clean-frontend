@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router';
-import { ProviderProvider } from './impl/context/provider.tsx';
 import { RepositoryProvider } from './impl/context/repository.tsx';
+import { ServiceProvider } from './impl/context/service.tsx';
 import { SessionProvider } from './impl/context/session.tsx';
 import { Layout } from './layout.tsx';
 
@@ -13,13 +13,13 @@ export function App() {
     <Suspense fallback={<p>Loading...</p>}>
       <QueryClientProvider client={client}>
         <BrowserRouter>
-          <ProviderProvider>
+          <ServiceProvider>
             <RepositoryProvider>
               <SessionProvider>
                 <Layout />
               </SessionProvider>
             </RepositoryProvider>
-          </ProviderProvider>
+          </ServiceProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </Suspense>

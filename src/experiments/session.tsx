@@ -79,7 +79,7 @@ export function SessionProvider(props: { children: ReactNode }) {
   }
 
   return (
-    <Context.Provider
+    <Context
       value={{
         user,
         login,
@@ -87,7 +87,7 @@ export function SessionProvider(props: { children: ReactNode }) {
       }}
     >
       {props.children}
-    </Context.Provider>
+    </Context>
   );
 }
 

@@ -1,6 +1,6 @@
-import type { StorageProvider } from '../../core/provider/storage.ts';
+import type { StorageService } from '../../core/service/storage.ts';
 
-export class StorageProviderImpl implements StorageProvider {
+export class StorageServiceImpl implements StorageService {
   async get(key: string): Promise<string | null> {
     try {
       return localStorage.getItem(key);
