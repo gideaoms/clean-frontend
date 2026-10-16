@@ -48,11 +48,7 @@ export function SessionProvider(props: { children: ReactNode }) {
     setUser(user);
   }
 
-  return (
-    <Context.Provider value={{ user, login, logout }}>
-      {props.children}
-    </Context.Provider>
-  );
+  return <Context value={{ user, login, logout }}>{props.children}</Context>;
 }
 
 export function useSession() {

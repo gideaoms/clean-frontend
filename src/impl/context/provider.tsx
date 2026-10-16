@@ -10,9 +10,7 @@ const Context = createContext<Providers | null>(null);
 const storage = new StorageProviderImpl();
 
 export function ProviderProvider(props: { children: ReactNode }) {
-  return (
-    <Context.Provider value={{ storage }}>{props.children}</Context.Provider>
-  );
+  return <Context value={{ storage }}>{props.children}</Context>;
 }
 
 export function useProvider() {

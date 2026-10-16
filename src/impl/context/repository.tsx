@@ -18,11 +18,7 @@ const user = new UserRepositoryImpl();
 const comment = new CommentRepositoryImpl();
 
 export function RepositoryProvider(props: { children: ReactNode }) {
-  return (
-    <Context.Provider value={{ post, user, comment }}>
-      {props.children}
-    </Context.Provider>
-  );
+  return <Context value={{ post, user, comment }}>{props.children}</Context>;
 }
 
 export function useRepository() {
